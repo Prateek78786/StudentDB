@@ -85,8 +85,8 @@ By combining **Flask’s lightweight web framework** with **MySQL’s secure dat
 ---
 
 ## 👨‍💻 Contributors
-- Developed by: [Your Name / Team Name]  
-- Guided by: [Mentor/Faculty Name]  
+- Developed by: Prateek Kumar Bal 
+- Guided by: Dr. Kavitha Nair  
 
 ---
 
