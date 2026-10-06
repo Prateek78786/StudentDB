@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance Analysis{% endblock %}
+
+{% block content %}
+<h2>Attendance Analysis</h2>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Select Course</h5>
+            </div>
+            <div class="card-body">
+                <form id="courseForm" method="get">
+                    <div class="mb-3">
+                        <label for="course_id" class="form-label">Course</label>
+                        <select class="form-select" id="course_id" name="course_id" required onchange="this.form.submit()">
+                            <option value="">-- Select Course --</option>
+                            {% for c in courses %}
+                            <option value="{{ c.course_id }}" {% if request.args.get('course_id')|int == c.course_id %}selected{% endif %}>
+                                {{ c.course_code }} - {{ c.course_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if course and attendance_data %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>{{ course.course_code }} - {{ course.course_name }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Registration No.</th>
+                                <th>Name</th>
+                                <th>Total Sessions</th>
+                                <th>Present</th>
+                                <th>Attendance %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in attendance_data %}
+                            <tr>
+                                <td>{{ student.registration_number }}</td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.total_sessions }}</td>
+                                <td>{{ student.present_count }}</td>
+                                <td>{{ student.attendance_percentage }}%</td>
+                                <td>
+                                    {% if student.attendance_percentage < 75 %}
+                                        <span class="badge bg-danger">Low</span>
+                                    {% elif student.attendance_percentage < 85 %}
+                                        <span class="badge bg-warning text-dark">Average</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Good</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4">
+                    <h5>Class Statistics</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Average Attendance</h5>
+                                    <p class="card-text text-center fw-bold fs-4">
+                                        {% set total = 0 %}
+                                        {% for student in attendance_data %}
+                                            {% set total = total + student.attendance_percentage %}
+                                        {% endfor %}
+                                        {% set average = total / attendance_data|length if attendance_data|length > 0 else 0 %}
+                                        {{ "%.2f"|format(average) }}%
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Students</h5>
+                                    <p class="card-text text-center fw-bold fs-4">{{ attendance_data|length }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Below 75%</h5>
+                                    <p class="card-text text-center fw-bold fs-4">
+                                        {% set below_threshold = 0 %}
+                                        {% for student in attendance_data %}
+                                            {% if student.attendance_percentage < 75 %}
+                                                {% set below_threshold = below_threshold + 1 %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {{ below_threshold }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="button" class="btn btn-primary" onclick="window.print()">Print Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+    {% if request.args.get('course_id') %}
+    <div class="alert alert-info">
+        No attendance data found for this course yet.
+    </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

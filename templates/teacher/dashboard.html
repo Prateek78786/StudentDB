@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<h2>Teacher Dashboard</h2>
+<p>Welcome, {{ session.name }}!</p>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Your Courses</h5>
+            </div>
+            <div class="card-body">
+                {% if courses %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                            <tr>
+                                <td>{{ course.course_code }}</td>
+                                <td>{{ course.course_name }}</td>
+                                <td>
+                                    <a href="{{ url_for('teacher_attendance', course_id=course.course_id, date=today) }}" class="btn btn-sm btn-primary">Mark Attendance</a>
+                                    <a href="{{ url_for('teacher_analysis', course_id=course.course_id) }}" class="btn btn-sm btn-info">View Analysis</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>You are not teaching any courses.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

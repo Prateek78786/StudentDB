@@ -1,0 +1,352 @@
+/* Attendance Management System CSS */
+/* Custom styles to enhance the Bootstrap framework */
+
+/* ===== Global Styles ===== */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #64748b;
+    --success-color: #22c55e;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --light-bg: #f8fafc;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    color: #334155;
+    line-height: 1.6;
+  }
+  
+  /* ===== Navigation Bar ===== */
+  .navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 1rem;
+  }
+  
+  .navbar-brand {
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .nav-link {
+    font-weight: 500;
+    transition: all var(--transition-speed);
+    padding: 0.5rem 1rem;
+    margin: 0 0.1rem;
+    border-radius: 4px;
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  /* ===== Container ===== */
+  .container {
+    max-width: 1200px;
+    padding: 0 1.5rem;
+  }
+  
+  /* ===== Cards ===== */
+  .card {
+    border: none;
+    box-shadow: var(--card-shadow);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: transform var(--transition-speed);
+  }
+  
+  .card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.25rem;
+  }
+  
+  .card-header h4, .card-header h5 {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  /* ===== Forms ===== */
+  .form-label {
+    font-weight: 500;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-control, .form-select {
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    padding: 0.6rem 1rem;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  }
+  
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    border-color: var(--primary-color);
+  }
+  
+  /* ===== Buttons ===== */
+  .btn {
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    transition: all var(--transition-speed);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  .btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+  
+  .btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+  }
+  
+  .btn-success:hover {
+    background-color: #16a34a;
+    border-color: #16a34a;
+  }
+  
+  .btn-sm {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  /* ===== Tables ===== */
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table th {
+    font-weight: 600;
+    color: var(--secondary-color);
+    border-bottom-width: 2px;
+    background-color: #f8fafc;
+    padding: 0.75rem 1rem;
+  }
+  
+  .table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  .table-responsive {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ===== Badges ===== */
+  .badge {
+    font-weight: 500;
+    padding: 0.4em 0.7em;
+    border-radius: 4px;
+  }
+  
+  /* ===== Alerts ===== */
+  .alert {
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ===== Statistics Cards ===== */
+  .bg-light {
+    background-color: var(--light-bg) !important;
+  }
+  
+  .card.bg-light {
+    transition: transform var(--transition-speed);
+  }
+  
+  .card.bg-light:hover {
+    transform: translateY(-3px);
+  }
+  
+  .card.bg-light .card-title {
+    color: var(--secondary-color);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  /* ===== List Groups ===== */
+  .list-group-item {
+    border-color: rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 1.25rem;
+  }
+  
+  /* ===== Login Page ===== */
+  .row.justify-content-center .card {
+    margin-top: 3rem;
+  }
+  
+  /* ===== Attendance Checkboxes ===== */
+  .form-check-input {
+    cursor: pointer;
+    width: 1.1em;
+    height: 1.1em;
+    margin-top: 0.25em;
+  }
+  
+  .form-check-input:checked {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+  }
+  
+  .form-check-label {
+    cursor: pointer;
+    padding-left: 0.25rem;
+  }
+  
+  /* ===== Dashboard Welcome ===== */
+  h2 + p {
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+  }
+  
+  /* ===== Attendance Tips ===== */
+  .card-body ul {
+    padding-left: 1.25rem;
+  }
+  
+  .card-body ul li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .card-body ul li:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* ===== Print Styles ===== */
+  @media print {
+    .navbar, .btn-primary, form, .alert, .row.mb-4 {
+      display: none !important;
+    }
+    
+    body {
+      background-color: white;
+    }
+    
+    .card {
+      box-shadow: none;
+      border: 1px solid #ddd;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 100%;
+    }
+    
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .table th {
+      background-color: #f1f1f1 !important;
+      color: black;
+    }
+  }
+  
+  /* ===== Responsiveness ===== */
+  @media (max-width: 992px) {
+    .navbar .container {
+      padding: 0 1rem;
+    }
+    
+    .card-body {
+      padding: 1.25rem;
+    }
+    
+    .table th, .table td {
+      padding: 0.6rem 0.8rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .row.mt-4 .col-md-6 {
+      margin-bottom: 1.5rem;
+    }
+    
+    .row.mt-4 .col-md-6:last-child {
+      margin-bottom: 0;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+    }
+    
+    .btn-sm {
+      padding: 0.3rem 0.6rem;
+    }
+  }
+  
+  /* ===== Dark Mode (Optional - Can be enabled via JavaScript) ===== */
+  .dark-mode {
+    background-color: #1e293b;
+    color: #e2e8f0;
+  }
+  
+  .dark-mode .card, 
+  .dark-mode .card-header,
+  .dark-mode .table,
+  .dark-mode .list-group-item {
+    background-color: #334155;
+    color: #e2e8f0;
+    border-color: #475569;
+  }
+  
+  .dark-mode .card-header h4,
+  .dark-mode .card-header h5 {
+    color: #93c5fd;
+  }
+  
+  .dark-mode .form-control,
+  .dark-mode .form-select {
+    background-color: #475569;
+    border-color: #64748b;
+    color: #e2e8f0;
+  }
+  
+  .dark-mode .table th {
+    background-color: #475569;
+    color: #e2e8f0;
+  }
+  
+  .dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .dark-mode .bg-light {
+    background-color: #334155 !important;
+  }
+  
+  .dark-mode .card.bg-light .card-title {
+    color: #94a3b8;
+  }

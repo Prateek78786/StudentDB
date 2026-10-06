@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<h2>Student Dashboard</h2>
+<p>Welcome, {{ session.name }}!</p>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>My Courses</h5>
+            </div>
+            <div class="card-body">
+                {% if courses %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Name</th>
+                                <th>Instructor</th>
+                                <th>Total Sessions</th>
+                                <th>Present</th>
+                                <th>Attendance %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                            <tr>
+                                <td>{{ course.course_code }}</td>
+                                <td>{{ course.course_name }}</td>
+                                <td>{{ course.teacher_name }}</td>
+                                <td>{{ course.total_sessions }}</td>
+                                <td>{{ course.present_count }}</td>
+                                <td>{{ course.attendance_percentage }}%</td>
+                                <td>
+                                    {% if course.attendance_percentage < 75 %}
+                                        <span class="badge bg-danger">Low</span>
+                                    {% elif course.attendance_percentage < 85 %}
+                                        <span class="badge bg-warning text-dark">Average</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Good</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>You are not enrolled in any courses.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recent Attendance</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_attendance %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in recent_attendance %}
+                            <tr>
+                                <td>{{ record.session_date }}</td>
+                                <td>{{ record.course_code }} - {{ record.course_name }}</td>
+                                <td>
+                                    {% if record.status == 'Present' %}
+                                        <span class="badge bg-success">Present</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Absent</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>No attendance records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Attendance Summary</h5>
+            </div>
+            <div class="card-body">
+                {% if courses %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Overall Attendance</h5>
+                                <p class="card-text text-center fw-bold fs-4">
+                                    {% set total_percentage = 0 %}
+                                    {% for course in courses %}
+                                        {% set total_percentage = total_percentage + course.attendance_percentage %}
+                                    {% endfor %}
+                                    {% set average = total_percentage / courses|length if courses|length > 0 else 0 %}
+                                    {{ "%.2f"|format(average) }}%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Courses</h5>
+                                <p class="card-text text-center fw-bold fs-4">{{ courses|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6>Attendance Status</h6>
+                    <ul class="list-group">
+                        {% set low_count = 0 %}
+                        {% set avg_count = 0 %}
+                        {% set good_count = 0 %}
+                        
+                        {% for course in courses %}
+                            {% if course.attendance_percentage < 75 %}
+                                {% set low_count = low_count + 1 %}
+                            {% elif course.attendance_percentage < 85 %}
+                                {% set avg_count = avg_count + 1 %}
+                            {% else %}
+                                {% set good_count = good_count + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Courses with Good Attendance
+                            <span class="badge bg-success rounded-pill">{{ good_count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Courses with Average Attendance
+                            <span class="badge bg-warning text-dark rounded-pill">{{ avg_count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Courses with Low Attendance
+                            <span class="badge bg-danger rounded-pill">{{ low_count }}</span>
+                        </li>
+                    </ul>
+                </div>
+                {% else %}
+                <p>No attendance data available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Attendance Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Regular attendance is crucial for academic success.</li>
+                    <li>Most institutions require at least 75% attendance to be eligible for examinations.</li>
+                    <li>If you have any issues affecting your attendance, please contact your course instructor.</li>
+                    <li>Medical absences may be excused with proper documentation.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

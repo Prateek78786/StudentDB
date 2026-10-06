@@ -1,0 +1,1342 @@
+
+mysql> select * from Users;
++---------+----------+---------------+---------+--------------+-----------+
+| user_id | username | password_hash | role    | reference_id | is_active |
++---------+----------+---------------+---------+--------------+-----------+
+|       1 | teacher1 | password123   | Teacher |            1 |         1 |
++---------+----------+---------------+---------+--------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> select * from teachers;
++------------+----------+---------------------+
+| teacher_id | name     | email               |
++------------+----------+---------------------+
+|          1 | John Doe | johndoe@example.com |
++------------+----------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from students;
+Empty set (0.00 sec)
+
+mysql> UPDATE Users
+    -> SET password_hash = '$2b$12$fv5JFetdvwMDnutr2twl4eFOyuC4xokp95gY2z8YEhVlDcv08pyam'
+    -> WHERE user_id = 1;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE Users
+    -> SET password_hash = 'scrypt:32768:8:1$ViF5qK7eGkW2Cc7n$171d2bf945b78d734747c9dabe7bcd6988ed64343a0419a549292e20c86e59cf72deb9f1d6118111c7b5c9696fbb474ca1bc5ed71c29804eabcfd7dbc9cab7cf'
+    -> WHERE user_id = 1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> show tables;
++---------------------+
+| Tables_in_studentdb |
++---------------------+
+| attendance          |
+| courses             |
+| enrollments         |
+| sessions            |
+| students            |
+| teachers            |
+| users               |
++---------------------+
+7 rows in set (0.01 sec)
+
+mysql> desc attendance;
++---------------+--------------------------+------+-----+---------+----------------+
+| Field         | Type                     | Null | Key | Default | Extra          |
++---------------+--------------------------+------+-----+---------+----------------+
+| attendance_id | int                      | NO   | PRI | NULL    | auto_increment |
+| session_id    | int                      | NO   | MUL | NULL    |                |
+| student_id    | int                      | NO   | MUL | NULL    |                |
+| status        | enum('Present','Absent') | NO   |     | NULL    |                |
++---------------+--------------------------+------+-----+---------+----------------+
+4 rows in set (0.01 sec)
+
+mysql> desc courses;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| course_id   | int          | NO   | PRI | NULL    | auto_increment |
+| course_code | varchar(20)  | NO   | UNI | NULL    |                |
+| course_name | varchar(100) | NO   |     | NULL    |                |
+| teacher_id  | int          | NO   | MUL | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> desc enrollments;
++---------------+------+------+-----+---------+----------------+
+| Field         | Type | Null | Key | Default | Extra          |
++---------------+------+------+-----+---------+----------------+
+| enrollment_id | int  | NO   | PRI | NULL    | auto_increment |
+| student_id    | int  | NO   | MUL | NULL    |                |
+| course_id     | int  | NO   | MUL | NULL    |                |
++---------------+------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> desc sessions;
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| session_id   | int          | NO   | PRI | NULL    | auto_increment |
+| course_id    | int          | NO   | MUL | NULL    |                |
+| session_date | date         | NO   |     | NULL    |                |
+| topic        | varchar(255) | YES  |     | NULL    |                |
++--------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> desc studens;
+ERROR 1146 (42S02): Table 'studentdb.studens' doesn't exist
+mysql> desc students;
++---------------------+--------------+------+-----+---------+----------------+
+| Field               | Type         | Null | Key | Default | Extra          |
++---------------------+--------------+------+-----+---------+----------------+
+| student_id          | int          | NO   | PRI | NULL    | auto_increment |
+| name                | varchar(100) | NO   |     | NULL    |                |
+| email               | varchar(100) | NO   | UNI | NULL    |                |
+| registration_number | varchar(20)  | NO   | UNI | NULL    |                |
++---------------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> desc teachers;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| teacher_id | int          | NO   | PRI | NULL    | auto_increment |
+| name       | varchar(100) | NO   |     | NULL    |                |
+| email      | varchar(100) | NO   | UNI | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> desc users;
++---------------+---------------------------+------+-----+---------+----------------+
+| Field         | Type                      | Null | Key | Default | Extra          |
++---------------+---------------------------+------+-----+---------+----------------+
+| user_id       | int                       | NO   | PRI | NULL    | auto_increment |
+| username      | varchar(50)               | NO   | UNI | NULL    |                |
+| password_hash | varchar(255)              | NO   |     | NULL    |                |
+| role          | enum('Teacher','Student') | NO   |     | NULL    |                |
+| reference_id  | int                       | NO   |     | NULL    |                |
+| is_active     | tinyint(1)                | YES  |     | 1       |                |
++---------------+---------------------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO teachers VALUES
+    -> (1, 'Michelle Freeman', 'paulmichelle@ruiz-brown.net'),
+    -> (2, 'Gabriel Olson', 'james27@lucas.info'),
+    -> (3, 'Kim Myers', 'katherine74@campbell-gilbert.org'),
+    -> (4, 'Lori Davis', 'kurtadams@gmail.com'),
+    -> (5, 'Kelly Rodriguez', 'reginamills@gmail.com'),
+    -> (6, 'Charles Lambert', 'egreen@ferrell.com'),
+    -> (7, 'Dr. Juan Williams', 'warekiara@gonzalez.com'),
+    -> (8, 'Samuel Foster', 'zkennedy@gmail.com'),
+    -> (9, 'Dr. James Joseph DDS', 'qhowell@yahoo.com'),
+    -> (10, 'Richard Peck', 'iwoods@hotmail.com');
+ERROR 1062 (23000): Duplicate entry '1' for key 'teachers.PRIMARY'
+mysql> INSERT INTO students VALUES
+    -> (1, 'Andrea Rasmussen', 'grossmichael@fox.net', 'REG0001'),
+    -> (2, 'Nicholas Bean', 'gregoryklein@yahoo.com', 'REG0002'),
+    -> (3, 'Matthew Hunter', 'fweber@young.com', 'REG0003'),
+    -> (4, 'Michelle Shah', 'pmurray@yahoo.com', 'REG0004'),
+    -> (5, 'Susan Martinez', 'nicholas38@patterson.net', 'REG0005'),
+    -> (6, 'Dylan Watkins', 'teresa45@munoz.info', 'REG0006'),
+    -> (7, 'Robert Sanchez', 'jody49@medina-clark.com', 'REG0007'),
+    -> (8, 'Mr. Miguel Carter', 'ktucker@williams-schroeder.com', 'REG0008'),
+    -> (9, 'Courtney Jenkins', 'mcconnellstephanie@jenkins-lopez.net', 'REG0009'),
+    -> (10, 'Ashley Rogers', 'williamfarmer@morrow.com', 'REG0010'),
+    -> (11, 'Jessica Mitchell', 'sheri07@yahoo.com', 'REG0011'),
+    -> (12, 'Joseph Morris', 'tcuevas@thompson-weber.com', 'REG0012'),
+    -> (13, 'Benjamin Berry', 'perezmadison@walker.com', 'REG0013'),
+    -> (14, 'Bruce Williams', 'gabriel99@hotmail.com', 'REG0014'),
+    -> (15, 'Victoria Downs', 'deannaprice@gmail.com', 'REG0015'),
+    -> (16, 'Kristen Anderson', 'tprice@perez.com', 'REG0016'),
+    -> (17, 'Dr. Lori Chavez DVM', 'carol89@sanchez-murphy.com', 'REG0017'),
+    -> (18, 'Christina Martin', 'caroline12@miller-oconnor.net', 'REG0018'),
+    -> (19, 'Laura Wall', 'stephanie12@murphy-rios.com', 'REG0019'),
+    -> (20, 'Lisa Farmer', 'rriggs@hotmail.com', 'REG0020'),
+    -> (21, 'Stephanie Rivera', 'andersoncarrie@phillips.com', 'REG0021'),
+    -> (22, 'Courtney Hernandez', 'amyfox@gmail.com', 'REG0022'),
+    -> (23, 'Dale Cooper', 'shanepatterson@hotmail.com', 'REG0023'),
+    -> (24, 'Roger Watts', 'donald32@hotmail.com', 'REG0024'),
+    -> (25, 'Gary Jordan', 'meghanshelton@yahoo.com', 'REG0025'),
+    -> (26, 'Maria Vazquez', 'yvilla@gmail.com', 'REG0026'),
+    -> (27, 'Brent Cortez', 'vshaw@yahoo.com', 'REG0027'),
+    -> (28, 'Yvonne Arnold', 'robertflores@gill.com', 'REG0028'),
+    -> (29, 'Jose Jackson', 'matthewchavez@gmail.com', 'REG0029'),
+    -> (30, 'Patricia Moody', 'crystal81@gmail.com', 'REG0030'),
+    -> (31, 'Michael Wilkins', 'tiffany27@hotmail.com', 'REG0031'),
+    -> (32, 'Claudia Jones', 'tjohnson@flynn-blake.biz', 'REG0032'),
+    -> (33, 'Wyatt Jones', 'noah31@houston-glover.com', 'REG0033'),
+    -> (34, 'Zachary Huber', 'djordan@long-graham.com', 'REG0034'),
+    -> (35, 'Robert Brown', 'whitedavid@gmail.com', 'REG0035'),
+    -> (36, 'Jason Huff', 'kyork@hotmail.com', 'REG0036'),
+    -> (37, 'Connor Lewis', 'yavila@yahoo.com', 'REG0037'),
+    -> (38, 'Ian Dixon', 'theresa87@campbell.biz', 'REG0038'),
+    -> (39, 'Brian Jacobs', 'gvaughn@walker.com', 'REG0039'),
+    -> (40, 'Robert Alvarez', 'samantha54@stafford-castaneda.info', 'REG0040'),
+    -> (41, 'Bonnie George', 'cohenelizabeth@yahoo.com', 'REG0041'),
+    -> (42, 'Robin Kelly', 'amandaramirez@hotmail.com', 'REG0042'),
+    -> (43, 'Austin Gonzalez', 'leeisabella@gmail.com', 'REG0043'),
+    -> (44, 'Felicia Schwartz', 'umiles@gmail.com', 'REG0044'),
+    -> (45, 'Lisa Skinner', 'james58@long.com', 'REG0045'),
+    -> (46, 'Kaitlyn Woodard', 'smithjoseph@hunter.biz', 'REG0046'),
+    -> (47, 'William Hernandez', 'murphylinda@hudson-montes.com', 'REG0047'),
+    -> (48, 'William Byrd', 'meyersjerry@lee-schultz.net', 'REG0048'),
+    -> (49, 'Ryan Hernandez', 'coltonreynolds@james.com', 'REG0049'),
+    -> (50, 'Pamela Evans', 'pattyjohnston@perez.info', 'REG0050'),
+    -> (51, 'James Murphy', 'nwilliams@gmail.com', 'REG0051'),
+    -> (52, 'Patrick Campos', 'adam45@gmail.com', 'REG0052'),
+    -> (53, 'John Robinson', 'martindarius@yahoo.com', 'REG0053'),
+    -> (54, 'Mr. Jermaine Franklin', 'nathan74@gmail.com', 'REG0054'),
+    -> (55, 'Alexandra Elliott', 'michellestephens@gmail.com', 'REG0055'),
+    -> (56, 'Sarah Lewis', 'patelmary@yahoo.com', 'REG0056'),
+    -> (57, 'Nicole Nixon', 'gyoung@gmail.com', 'REG0057'),
+    -> (58, 'Charles Dixon', 'teresa29@hale.com', 'REG0058'),
+    -> (59, 'Patricia Lawson', 'vwheeler@butler.com', 'REG0059'),
+    -> (60, 'Robin Simon', 'jjones@hotmail.com', 'REG0060'),
+    -> (61, 'Rachel Oliver', 'christophermiller@gonzalez.com', 'REG0061'),
+    -> (62, 'Mark Gillespie', 'vaughnjessica@gmail.com', 'REG0062'),
+    -> (63, 'Michael Garza', 'elliskimberly@espinoza.com', 'REG0063'),
+    -> (64, 'Donna Smith', 'heather34@yahoo.com', 'REG0064'),
+    -> (65, 'Jennifer Perkins', 'seanevans@jones.net', 'REG0065'),
+    -> (66, 'Rachel Stewart', 'cynthia09@yahoo.com', 'REG0066'),
+    -> (67, 'Austin Fry', 'nking@collins.com', 'REG0067'),
+    -> (68, 'Michael Sellers', 'jennifer10@jones.com', 'REG0068'),
+    -> (69, 'Hannah Bailey', 'sethfields@hotmail.com', 'REG0069'),
+    -> (70, 'Paul Powell', 'odomvanessa@hotmail.com', 'REG0070');
+Query OK, 70 rows affected (0.01 sec)
+Records: 70  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO courses VALUES
+    -> (1, 'CS001', 'Horizontal next generation array Fundamentals', 10),
+    -> (2, 'CS002', 'Inverse composite initiative Fundamentals', 10),
+    -> (3, 'CS003', 'Phased incremental productivity Fundamentals', 1),
+    -> (4, 'CS004', 'Operative national model Fundamentals', 9),
+    -> (5, 'CS005', 'Ergonomic demand-driven toolset Fundamentals', 2),
+    -> (6, 'CS006', 'Automated optimal matrices Fundamentals', 7),
+    -> (7, 'CS007', 'Configurable maximized encoding Fundamentals', 5),
+    -> (8, 'CS008', 'Ameliorated radical support Fundamentals', 7),
+    -> (9, 'CS009', 'Reduced user-facing middleware Fundamentals', 3),
+    -> (10, 'CS010', 'Customer-focused 24hour database Fundamentals', 8);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`studentdb`.`courses`, CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`teacher_id`))
+mysql> INSERT INTO teachers VALUES
+    -> (2, 'Gabriel Olson', 'james27@lucas.info'),
+    -> (3, 'Kim Myers', 'katherine74@campbell-gilbert.org'),
+    -> (4, 'Lori Davis', 'kurtadams@gmail.com'),
+    -> (5, 'Kelly Rodriguez', 'reginamills@gmail.com'),
+    -> (6, 'Charles Lambert', 'egreen@ferrell.com'),
+    -> (7, 'Dr. Juan Williams', 'warekiara@gonzalez.com'),
+    -> (8, 'Samuel Foster', 'zkennedy@gmail.com'),
+    -> (9, 'Dr. James Joseph DDS', 'qhowell@yahoo.com'),
+    -> (10, 'Richard Peck', 'iwoods@hotmail.com');
+Query OK, 9 rows affected (0.00 sec)
+Records: 9  Duplicates: 0  Warnings: 0
+
+mysql> select * from teachers;
++------------+----------------------+----------------------------------+
+| teacher_id | name                 | email                            |
++------------+----------------------+----------------------------------+
+|          1 | John Doe             | johndoe@example.com              |
+|          2 | Gabriel Olson        | james27@lucas.info               |
+|          3 | Kim Myers            | katherine74@campbell-gilbert.org |
+|          4 | Lori Davis           | kurtadams@gmail.com              |
+|          5 | Kelly Rodriguez      | reginamills@gmail.com            |
+|          6 | Charles Lambert      | egreen@ferrell.com               |
+|          7 | Dr. Juan Williams    | warekiara@gonzalez.com           |
+|          8 | Samuel Foster        | zkennedy@gmail.com               |
+|          9 | Dr. James Joseph DDS | qhowell@yahoo.com                |
+|         10 | Richard Peck         | iwoods@hotmail.com               |
++------------+----------------------+----------------------------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from students;;
++------------+-----------------------+--------------------------------------+---------------------+
+| student_id | name                  | email                                | registration_number |
++------------+-----------------------+--------------------------------------+---------------------+
+|          1 | Andrea Rasmussen      | grossmichael@fox.net                 | REG0001             |
+|          2 | Nicholas Bean         | gregoryklein@yahoo.com               | REG0002             |
+|          3 | Matthew Hunter        | fweber@young.com                     | REG0003             |
+|          4 | Michelle Shah         | pmurray@yahoo.com                    | REG0004             |
+|          5 | Susan Martinez        | nicholas38@patterson.net             | REG0005             |
+|          6 | Dylan Watkins         | teresa45@munoz.info                  | REG0006             |
+|          7 | Robert Sanchez        | jody49@medina-clark.com              | REG0007             |
+|          8 | Mr. Miguel Carter     | ktucker@williams-schroeder.com       | REG0008             |
+|          9 | Courtney Jenkins      | mcconnellstephanie@jenkins-lopez.net | REG0009             |
+|         10 | Ashley Rogers         | williamfarmer@morrow.com             | REG0010             |
+|         11 | Jessica Mitchell      | sheri07@yahoo.com                    | REG0011             |
+|         12 | Joseph Morris         | tcuevas@thompson-weber.com           | REG0012             |
+|         13 | Benjamin Berry        | perezmadison@walker.com              | REG0013             |
+|         14 | Bruce Williams        | gabriel99@hotmail.com                | REG0014             |
+|         15 | Victoria Downs        | deannaprice@gmail.com                | REG0015             |
+|         16 | Kristen Anderson      | tprice@perez.com                     | REG0016             |
+|         17 | Dr. Lori Chavez DVM   | carol89@sanchez-murphy.com           | REG0017             |
+|         18 | Christina Martin      | caroline12@miller-oconnor.net        | REG0018             |
+|         19 | Laura Wall            | stephanie12@murphy-rios.com          | REG0019             |
+|         20 | Lisa Farmer           | rriggs@hotmail.com                   | REG0020             |
+|         21 | Stephanie Rivera      | andersoncarrie@phillips.com          | REG0021             |
+|         22 | Courtney Hernandez    | amyfox@gmail.com                     | REG0022             |
+|         23 | Dale Cooper           | shanepatterson@hotmail.com           | REG0023             |
+|         24 | Roger Watts           | donald32@hotmail.com                 | REG0024             |
+|         25 | Gary Jordan           | meghanshelton@yahoo.com              | REG0025             |
+|         26 | Maria Vazquez         | yvilla@gmail.com                     | REG0026             |
+|         27 | Brent Cortez          | vshaw@yahoo.com                      | REG0027             |
+|         28 | Yvonne Arnold         | robertflores@gill.com                | REG0028             |
+|         29 | Jose Jackson          | matthewchavez@gmail.com              | REG0029             |
+|         30 | Patricia Moody        | crystal81@gmail.com                  | REG0030             |
+|         31 | Michael Wilkins       | tiffany27@hotmail.com                | REG0031             |
+|         32 | Claudia Jones         | tjohnson@flynn-blake.biz             | REG0032             |
+|         33 | Wyatt Jones           | noah31@houston-glover.com            | REG0033             |
+|         34 | Zachary Huber         | djordan@long-graham.com              | REG0034             |
+|         35 | Robert Brown          | whitedavid@gmail.com                 | REG0035             |
+|         36 | Jason Huff            | kyork@hotmail.com                    | REG0036             |
+|         37 | Connor Lewis          | yavila@yahoo.com                     | REG0037             |
+|         38 | Ian Dixon             | theresa87@campbell.biz               | REG0038             |
+|         39 | Brian Jacobs          | gvaughn@walker.com                   | REG0039             |
+|         40 | Robert Alvarez        | samantha54@stafford-castaneda.info   | REG0040             |
+|         41 | Bonnie George         | cohenelizabeth@yahoo.com             | REG0041             |
+|         42 | Robin Kelly           | amandaramirez@hotmail.com            | REG0042             |
+|         43 | Austin Gonzalez       | leeisabella@gmail.com                | REG0043             |
+|         44 | Felicia Schwartz      | umiles@gmail.com                     | REG0044             |
+|         45 | Lisa Skinner          | james58@long.com                     | REG0045             |
+|         46 | Kaitlyn Woodard       | smithjoseph@hunter.biz               | REG0046             |
+|         47 | William Hernandez     | murphylinda@hudson-montes.com        | REG0047             |
+|         48 | William Byrd          | meyersjerry@lee-schultz.net          | REG0048             |
+|         49 | Ryan Hernandez        | coltonreynolds@james.com             | REG0049             |
+|         50 | Pamela Evans          | pattyjohnston@perez.info             | REG0050             |
+|         51 | James Murphy          | nwilliams@gmail.com                  | REG0051             |
+|         52 | Patrick Campos        | adam45@gmail.com                     | REG0052             |
+|         53 | John Robinson         | martindarius@yahoo.com               | REG0053             |
+|         54 | Mr. Jermaine Franklin | nathan74@gmail.com                   | REG0054             |
+|         55 | Alexandra Elliott     | michellestephens@gmail.com           | REG0055             |
+|         56 | Sarah Lewis           | patelmary@yahoo.com                  | REG0056             |
+|         57 | Nicole Nixon          | gyoung@gmail.com                     | REG0057             |
+|         58 | Charles Dixon         | teresa29@hale.com                    | REG0058             |
+|         59 | Patricia Lawson       | vwheeler@butler.com                  | REG0059             |
+|         60 | Robin Simon           | jjones@hotmail.com                   | REG0060             |
+|         61 | Rachel Oliver         | christophermiller@gonzalez.com       | REG0061             |
+|         62 | Mark Gillespie        | vaughnjessica@gmail.com              | REG0062             |
+|         63 | Michael Garza         | elliskimberly@espinoza.com           | REG0063             |
+|         64 | Donna Smith           | heather34@yahoo.com                  | REG0064             |
+|         65 | Jennifer Perkins      | seanevans@jones.net                  | REG0065             |
+|         66 | Rachel Stewart        | cynthia09@yahoo.com                  | REG0066             |
+|         67 | Austin Fry            | nking@collins.com                    | REG0067             |
+|         68 | Michael Sellers       | jennifer10@jones.com                 | REG0068             |
+|         69 | Hannah Bailey         | sethfields@hotmail.com               | REG0069             |
+|         70 | Paul Powell           | odomvanessa@hotmail.com              | REG0070             |
++------------+-----------------------+--------------------------------------+---------------------+
+70 rows in set (0.00 sec)
+
+ERROR:
+No query specified
+
+mysql> INSERT INTO courses VALUES
+    ->     -> (1, 'CS001', 'Horizontal next generation array Fundamentals', 10),
+    ->     -> (2, 'CS002', 'Inverse composite initiative Fundamentals', 10),
+    ->     -> (3, 'CS003', 'Phased incremental productivity Fundamentals', 1),
+    ->     -> (4, 'CS004', 'Operative national model Fundamentals', 9),
+    ->     -> (5, 'CS005', 'Ergonomic demand-driven toolset Fundamentals', 2),
+    ->     -> (6, 'CS006', 'Automated optimal matrices Fundamentals', 7),
+    ->     -> (7, 'CS007', 'Configurable maximized encoding Fundamentals', 5),
+    ->     -> (8, 'CS008', 'Ameliorated radical support Fundamentals', 7),
+    ->     -> (9, 'CS009', 'Reduced user-facing middleware Fundamentals', 3),
+    ->     -> (10, 'CS010', 'Customer-focused 24hour database Fundamentals', 8);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-> (1, 'CS001', 'Horizontal next generation array Fundamentals', 10),
+    -> (2,' at line 2
+mysql> INSERT INTO courses VALUES
+    -> (1, 'CS001', 'Horizontal next generation array Fundamentals', 10),
+    -> (2, 'CS002', 'Inverse composite initiative Fundamentals', 10),
+    -> (3, 'CS003', 'Phased incremental productivity Fundamentals', 1),
+    -> (4, 'CS004', 'Operative national model Fundamentals', 9),
+    -> (5, 'CS005', 'Ergonomic demand-driven toolset Fundamentals', 2),
+    -> (6, 'CS006', 'Automated optimal matrices Fundamentals', 7),
+    -> (7, 'CS007', 'Configurable maximized encoding Fundamentals', 5),
+    -> (8, 'CS008', 'Ameliorated radical support Fundamentals', 7),
+    -> (9, 'CS009', 'Reduced user-facing middleware Fundamentals', 3),
+    -> (10, 'CS010', 'Customer-focused 24hour database Fundamentals', 8);
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> select * from courses;
++-----------+-------------+-----------------------------------------------+------------+
+| course_id | course_code | course_name                                   | teacher_id |
++-----------+-------------+-----------------------------------------------+------------+
+|         1 | CS001       | Horizontal next generation array Fundamentals |         10 |
+|         2 | CS002       | Inverse composite initiative Fundamentals     |         10 |
+|         3 | CS003       | Phased incremental productivity Fundamentals  |          1 |
+|         4 | CS004       | Operative national model Fundamentals         |          9 |
+|         5 | CS005       | Ergonomic demand-driven toolset Fundamentals  |          2 |
+|         6 | CS006       | Automated optimal matrices Fundamentals       |          7 |
+|         7 | CS007       | Configurable maximized encoding Fundamentals  |          5 |
+|         8 | CS008       | Ameliorated radical support Fundamentals      |          7 |
+|         9 | CS009       | Reduced user-facing middleware Fundamentals   |          3 |
+|        10 | CS010       | Customer-focused 24hour database Fundamentals |          8 |
++-----------+-------------+-----------------------------------------------+------------+
+10 rows in set (0.00 sec)
+
+mysql> INSERT INTO sessions VALUES
+    -> (1, 1, '2023-09-01', 'Introduction'),
+    -> (2, 1, '2023-09-03', 'Lecture 1'),
+    -> (3, 1, '2023-09-05', 'Lecture 2'),
+    -> (4, 1, '2023-09-07', 'Assignment Discussion'),
+    -> (5, 1, '2023-09-09', 'Midterm Prep'),
+    -> (6, 1, '2023-09-11', 'Practical Lab'),
+    -> (7, 1, '2023-09-13', 'Group Discussion'),
+    -> (8, 1, '2023-09-15', 'Project Briefing'),
+    -> (9, 1, '2023-09-17', 'Case Study'),
+    -> (10, 1, '2023-09-19', 'Q&A Session'),
+    -> (11, 1, '2023-09-21', 'Guest Lecture'),
+    -> (12, 1, '2023-09-23', 'Review'),
+    -> (13, 1, '2023-09-25', 'Final Prep'),
+    -> (14, 1, '2023-09-27', 'Presentation Day'),
+    -> (15, 1, '2023-09-29', 'Final Exam'),
+    -> (16, 2, '2023-09-01', 'Introduction'),
+    -> (17, 2, '2023-09-03', 'Lecture 1'),
+    -> (18, 2, '2023-09-05', 'Lecture 2'),
+    -> (19, 2, '2023-09-07', 'Assignment Discussion'),
+    -> (20, 2, '2023-09-09', 'Midterm Prep'),
+    -> (21, 2, '2023-09-11', 'Practical Lab'),
+    -> (22, 2, '2023-09-13', 'Group Discussion'),
+    -> (23, 2, '2023-09-15', 'Project Briefing'),
+    -> (24, 2, '2023-09-17', 'Case Study'),
+    -> (25, 2, '2023-09-19', 'Q&A Session'),
+    -> (26, 2, '2023-09-21', 'Guest Lecture'),
+    -> (27, 2, '2023-09-23', 'Review'),
+    -> (28, 2, '2023-09-25', 'Final Prep'),
+    -> (29, 2, '2023-09-27', 'Presentation Day'),
+    -> (30, 2, '2023-09-29', 'Final Exam'),
+    -> (31, 3, '2023-09-01', 'Introduction'),
+    -> (32, 3, '2023-09-03', 'Lecture 1'),
+    -> (33, 3, '2023-09-05', 'Lecture 2'),
+    -> (34, 3, '2023-09-07', 'Assignment Discussion'),
+    -> (35, 3, '2023-09-09', 'Midterm Prep'),
+    -> (36, 3, '2023-09-11', 'Practical Lab'),
+    -> (37, 3, '2023-09-13', 'Group Discussion'),
+    -> (38, 3, '2023-09-15', 'Project Briefing'),
+    -> (39, 3, '2023-09-17', 'Case Study'),
+    -> (40, 3, '2023-09-19', 'Q&A Session'),
+    -> (41, 3, '2023-09-21', 'Guest Lecture'),
+    -> (42, 3, '2023-09-23', 'Review'),
+    -> (43, 3, '2023-09-25', 'Final Prep'),
+    -> (44, 3, '2023-09-27', 'Presentation Day'),
+    -> (45, 3, '2023-09-29', 'Final Exam'),
+    -> (46, 4, '2023-09-01', 'Introduction'),
+    -> (47, 4, '2023-09-03', 'Lecture 1'),
+    -> (48, 4, '2023-09-05', 'Lecture 2'),
+    -> (49, 4, '2023-09-07', 'Assignment Discussion'),
+    -> (50, 4, '2023-09-09', 'Midterm Prep'),
+    -> (51, 4, '2023-09-11', 'Practical Lab'),
+    -> (52, 4, '2023-09-13', 'Group Discussion'),
+    -> (53, 4, '2023-09-15', 'Project Briefing'),
+    -> (54, 4, '2023-09-17', 'Case Study'),
+    -> (55, 4, '2023-09-19', 'Q&A Session'),
+    -> (56, 4, '2023-09-21', 'Guest Lecture'),
+    -> (57, 4, '2023-09-23', 'Review'),
+    -> (58, 4, '2023-09-25', 'Final Prep'),
+    -> (59, 4, '2023-09-27', 'Presentation Day'),
+    -> (60, 4, '2023-09-29', 'Final Exam'),
+    -> (61, 5, '2023-09-01', 'Introduction'),
+    -> (62, 5, '2023-09-03', 'Lecture 1'),
+    -> (63, 5, '2023-09-05', 'Lecture 2'),
+    -> (64, 5, '2023-09-07', 'Assignment Discussion'),
+    -> (65, 5, '2023-09-09', 'Midterm Prep'),
+    -> (66, 5, '2023-09-11', 'Practical Lab'),
+    -> (67, 5, '2023-09-13', 'Group Discussion'),
+    -> (68, 5, '2023-09-15', 'Project Briefing'),
+    -> (69, 5, '2023-09-17', 'Case Study'),
+    -> (70, 5, '2023-09-19', 'Q&A Session'),
+    -> (71, 5, '2023-09-21', 'Guest Lecture'),
+    -> (72, 5, '2023-09-23', 'Review'),
+    -> (73, 5, '2023-09-25', 'Final Prep'),
+    -> (74, 5, '2023-09-27', 'Presentation Day'),
+    -> (75, 5, '2023-09-29', 'Final Exam'),
+    -> (76, 6, '2023-09-01', 'Introduction'),
+    -> (77, 6, '2023-09-03', 'Lecture 1'),
+    -> (78, 6, '2023-09-05', 'Lecture 2'),
+    -> (79, 6, '2023-09-07', 'Assignment Discussion'),
+    -> (80, 6, '2023-09-09', 'Midterm Prep'),
+    -> (81, 6, '2023-09-11', 'Practical Lab'),
+    -> (82, 6, '2023-09-13', 'Group Discussion'),
+    -> (83, 6, '2023-09-15', 'Project Briefing'),
+    -> (84, 6, '2023-09-17', 'Case Study'),
+    -> (85, 6, '2023-09-19', 'Q&A Session'),
+    -> (86, 6, '2023-09-21', 'Guest Lecture'),
+    -> (87, 6, '2023-09-23', 'Review'),
+    -> (88, 6, '2023-09-25', 'Final Prep'),
+    -> (89, 6, '2023-09-27', 'Presentation Day'),
+    -> (90, 6, '2023-09-29', 'Final Exam'),
+    -> (91, 7, '2023-09-01', 'Introduction'),
+    -> (92, 7, '2023-09-03', 'Lecture 1'),
+    -> (93, 7, '2023-09-05', 'Lecture 2'),
+    -> (94, 7, '2023-09-07', 'Assignment Discussion'),
+    -> (95, 7, '2023-09-09', 'Midterm Prep'),
+    -> (96, 7, '2023-09-11', 'Practical Lab'),
+    -> (97, 7, '2023-09-13', 'Group Discussion'),
+    -> (98, 7, '2023-09-15', 'Project Briefing'),
+    -> (99, 7, '2023-09-17', 'Case Study'),
+    -> (100, 7, '2023-09-19', 'Q&A Session'),
+    -> (101, 7, '2023-09-21', 'Guest Lecture'),
+    -> (102, 7, '2023-09-23', 'Review'),
+    -> (103, 7, '2023-09-25', 'Final Prep'),
+    -> (104, 7, '2023-09-27', 'Presentation Day'),
+    -> (105, 7, '2023-09-29', 'Final Exam'),
+    -> (106, 8, '2023-09-01', 'Introduction'),
+    -> (107, 8, '2023-09-03', 'Lecture 1'),
+    -> (108, 8, '2023-09-05', 'Lecture 2'),
+    -> (109, 8, '2023-09-07', 'Assignment Discussion'),
+    -> (110, 8, '2023-09-09', 'Midterm Prep'),
+    -> (111, 8, '2023-09-11', 'Practical Lab'),
+    -> (112, 8, '2023-09-13', 'Group Discussion'),
+    -> (113, 8, '2023-09-15', 'Project Briefing'),
+    -> (114, 8, '2023-09-17', 'Case Study'),
+    -> (115, 8, '2023-09-19', 'Q&A Session'),
+    -> (116, 8, '2023-09-21', 'Guest Lecture'),
+    -> (117, 8, '2023-09-23', 'Review'),
+    -> (118, 8, '2023-09-25', 'Final Prep'),
+    -> (119, 8, '2023-09-27', 'Presentation Day'),
+    -> (120, 8, '2023-09-29', 'Final Exam'),
+    -> (121, 9, '2023-09-01', 'Introduction'),
+    -> (122, 9, '2023-09-03', 'Lecture 1'),
+    -> (123, 9, '2023-09-05', 'Lecture 2'),
+    -> (124, 9, '2023-09-07', 'Assignment Discussion'),
+    -> (125, 9, '2023-09-09', 'Midterm Prep'),
+    -> (126, 9, '2023-09-11', 'Practical Lab'),
+    -> (127, 9, '2023-09-13', 'Group Discussion'),
+    -> (128, 9, '2023-09-15', 'Project Briefing'),
+    -> (129, 9, '2023-09-17', 'Case Study'),
+    -> (130, 9, '2023-09-19', 'Q&A Session'),
+    -> (131, 9, '2023-09-21', 'Guest Lecture'),
+    -> (132, 9, '2023-09-23', 'Review'),
+    -> (133, 9, '2023-09-25', 'Final Prep'),
+    -> (134, 9, '2023-09-27', 'Presentation Day'),
+    -> (135, 9, '2023-09-29', 'Final Exam'),
+    -> (136, 10, '2023-09-01', 'Introduction'),
+    -> (137, 10, '2023-09-03', 'Lecture 1'),
+    -> (138, 10, '2023-09-05', 'Lecture 2'),
+    -> (139, 10, '2023-09-07', 'Assignment Discussion'),
+    -> (140, 10, '2023-09-09', 'Midterm Prep'),
+    -> (141, 10, '2023-09-11', 'Practical Lab'),
+    -> (142, 10, '2023-09-13', 'Group Discussion'),
+    -> (143, 10, '2023-09-15', 'Project Briefing'),
+    -> (144, 10, '2023-09-17', 'Case Study'),
+    -> (145, 10, '2023-09-19', 'Q&A Session'),
+    -> (146, 10, '2023-09-21', 'Guest Lecture'),
+    -> (147, 10, '2023-09-23', 'Review'),
+    -> (148, 10, '2023-09-25', 'Final Prep'),
+    -> (149, 10, '2023-09-27', 'Presentation Day'),
+    -> (150, 10, '2023-09-29', 'Final Exam');
+Query OK, 150 rows affected (0.01 sec)
+Records: 150  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO enrollments VALUES
+    -> (1, 1, 6),
+    -> (2, 1, 2),
+    -> (3, 1, 4),
+    -> (4, 1, 1),
+    -> (5, 2, 8),
+    -> (6, 2, 4),
+    -> (7, 2, 9),
+    -> (8, 3, 3),
+    -> (9, 3, 10),
+    -> (10, 3, 6),
+    -> (11, 4, 2),
+    -> (12, 4, 9),
+    -> (13, 4, 3),
+    -> (14, 5, 10),
+    -> (15, 5, 1),
+    -> (16, 5, 7),
+    -> (17, 5, 5),
+    -> (18, 6, 5),
+    -> (19, 6, 10),
+    -> (20, 6, 4),
+    -> (21, 7, 5),
+    -> (22, 7, 3),
+    -> (23, 7, 9),
+    -> (24, 8, 1),
+    -> (25, 8, 9),
+    -> (26, 8, 4),
+    -> (27, 9, 6),
+    -> (28, 9, 1),
+    -> (29, 9, 3),
+    -> (30, 9, 8),
+    -> (31, 10, 6),
+    -> (32, 10, 4),
+    -> (33, 10, 10),
+    -> (34, 11, 5),
+    -> (35, 11, 6),
+    -> (36, 11, 10),
+    -> (37, 12, 2),
+    -> (38, 12, 7),
+    -> (39, 13, 6),
+    -> (40, 13, 7),
+    -> (41, 13, 3),
+    -> (42, 13, 1),
+    -> (43, 14, 3),
+    -> (44, 14, 7),
+    -> (45, 14, 9),
+    -> (46, 14, 6),
+    -> (47, 15, 5),
+    -> (48, 15, 10),
+    -> (49, 15, 8),
+    -> (50, 16, 5),
+    -> (51, 16, 1),
+    -> (52, 16, 3),
+    -> (53, 16, 7),
+    -> (54, 17, 8),
+    -> (55, 17, 10),
+    -> (56, 17, 5),
+    -> (57, 17, 6),
+    -> (58, 18, 3),
+    -> (59, 18, 1),
+    -> (60, 18, 4),
+    -> (61, 19, 10),
+    -> (62, 19, 2),
+    -> (63, 19, 3),
+    -> (64, 19, 9),
+    -> (65, 20, 5),
+    -> (66, 20, 1),
+    -> (67, 21, 10),
+    -> (68, 21, 5),
+    -> (69, 21, 8),
+    -> (70, 22, 7),
+    -> (71, 22, 5),
+    -> (72, 23, 2),
+    -> (73, 23, 1),
+    -> (74, 23, 7),
+    -> (75, 24, 9),
+    -> (76, 24, 3),
+    -> (77, 24, 6),
+    -> (78, 24, 2),
+    -> (79, 25, 2),
+    -> (80, 25, 7),
+    -> (81, 25, 5),
+    -> (82, 26, 7),
+    -> (83, 26, 5),
+    -> (84, 26, 8),
+    -> (85, 26, 4),
+    -> (86, 27, 8),
+    -> (87, 27, 7),
+    -> (88, 28, 3),
+    -> (89, 28, 4),
+    -> (90, 28, 6),
+    -> (91, 29, 10),
+    -> (92, 29, 7),
+    -> (93, 29, 4),
+    -> (94, 29, 9),
+    -> (95, 30, 7),
+    -> (96, 30, 10),
+    -> (97, 30, 8),
+    -> (98, 30, 3),
+    -> (99, 31, 4),
+    -> (100, 31, 2),
+    -> (101, 32, 3),
+    -> (102, 32, 7),
+    -> (103, 32, 4),
+    -> (104, 32, 10),
+    -> (105, 33, 1),
+    -> (106, 33, 5),
+    -> (107, 33, 2),
+    -> (108, 34, 5),
+    -> (109, 34, 4),
+    -> (110, 34, 7),
+    -> (111, 34, 6),
+    -> (112, 35, 2),
+    -> (113, 35, 4),
+    -> (114, 35, 3),
+    -> (115, 35, 7),
+    -> (116, 36, 3),
+    -> (117, 36, 7),
+    -> (118, 37, 2),
+    -> (119, 37, 10),
+    -> (120, 37, 4),
+    -> (121, 37, 8),
+    -> (122, 38, 7),
+    -> (123, 38, 5),
+    -> (124, 38, 10),
+    -> (125, 39, 3),
+    -> (126, 39, 9),
+    -> (127, 39, 5),
+    -> (128, 39, 1),
+    -> (129, 40, 1),
+    -> (130, 40, 3),
+    -> (131, 40, 5),
+    -> (132, 40, 7),
+    -> (133, 41, 4),
+    -> (134, 41, 10),
+    -> (135, 41, 5),
+    -> (136, 42, 6),
+    -> (137, 42, 4),
+    -> (138, 42, 10),
+    -> (139, 43, 9),
+    -> (140, 43, 10),
+    -> (141, 43, 8),
+    -> (142, 43, 7),
+    -> (143, 44, 7),
+    -> (144, 44, 5),
+    -> (145, 45, 6),
+    -> (146, 45, 8),
+    -> (147, 45, 3),
+    -> (148, 46, 1),
+    -> (149, 46, 3),
+    -> (150, 47, 1),
+    -> (151, 47, 5),
+    -> (152, 47, 10),
+    -> (153, 48, 1),
+    -> (154, 48, 8),
+    -> (155, 49, 2),
+    -> (156, 49, 3),
+    -> (157, 50, 9),
+    -> (158, 50, 3),
+    -> (159, 50, 5),
+    -> (160, 50, 10),
+    -> (161, 51, 4),
+    -> (162, 51, 7),
+    -> (163, 51, 3),
+    -> (164, 52, 1),
+    -> (165, 52, 10),
+    -> (166, 53, 9),
+    -> (167, 53, 3),
+    -> (168, 53, 2),
+    -> (169, 54, 4),
+    -> (170, 54, 3),
+    -> (171, 55, 9),
+    -> (172, 55, 8),
+    -> (173, 55, 7),
+    -> (174, 56, 2),
+    -> (175, 56, 9),
+    -> (176, 56, 6),
+    -> (177, 57, 2),
+    -> (178, 57, 7),
+    -> (179, 57, 4),
+    -> (180, 57, 5),
+    -> (181, 58, 6),
+    -> (182, 58, 10),
+    -> (183, 59, 3),
+    -> (184, 59, 1),
+    -> (185, 59, 2),
+    -> (186, 60, 6),
+    -> (187, 60, 2),
+    -> (188, 60, 4),
+    -> (189, 61, 3),
+    -> (190, 61, 7),
+    -> (191, 61, 1),
+    -> (192, 62, 8),
+    -> (193, 62, 3),
+    -> (194, 62, 1),
+    -> (195, 62, 9),
+    -> (196, 63, 10),
+    -> (197, 63, 9),
+    -> (198, 64, 5),
+    -> (199, 64, 7),
+    -> (200, 64, 6),
+    -> (201, 64, 4),
+    -> (202, 65, 3),
+    -> (203, 65, 8),
+    -> (204, 66, 8),
+    -> (205, 66, 2),
+    -> (206, 67, 7),
+    -> (207, 67, 9),
+    -> (208, 68, 5),
+    -> (209, 68, 2),
+    -> (210, 69, 3),
+    -> (211, 69, 10),
+    -> (212, 69, 4),
+    -> (213, 70, 9),
+    -> (214, 70, 8),
+    -> (215, 70, 4);
+Query OK, 215 rows affected (0.01 sec)
+Records: 215  Duplicates: 0  Warnings: 0
+
+mysql> select * from sessions;
++------------+-----------+--------------+-----------------------+
+| session_id | course_id | session_date | topic                 |
++------------+-----------+--------------+-----------------------+
+|          1 |         1 | 2023-09-01   | Introduction          |
+|          2 |         1 | 2023-09-03   | Lecture 1             |
+|          3 |         1 | 2023-09-05   | Lecture 2             |
+|          4 |         1 | 2023-09-07   | Assignment Discussion |
+|          5 |         1 | 2023-09-09   | Midterm Prep          |
+|          6 |         1 | 2023-09-11   | Practical Lab         |
+|          7 |         1 | 2023-09-13   | Group Discussion      |
+|          8 |         1 | 2023-09-15   | Project Briefing      |
+|          9 |         1 | 2023-09-17   | Case Study            |
+|         10 |         1 | 2023-09-19   | Q&A Session           |
+|         11 |         1 | 2023-09-21   | Guest Lecture         |
+|         12 |         1 | 2023-09-23   | Review                |
+|         13 |         1 | 2023-09-25   | Final Prep            |
+|         14 |         1 | 2023-09-27   | Presentation Day      |
+|         15 |         1 | 2023-09-29   | Final Exam            |
+|         16 |         2 | 2023-09-01   | Introduction          |
+|         17 |         2 | 2023-09-03   | Lecture 1             |
+|         18 |         2 | 2023-09-05   | Lecture 2             |
+|         19 |         2 | 2023-09-07   | Assignment Discussion |
+|         20 |         2 | 2023-09-09   | Midterm Prep          |
+|         21 |         2 | 2023-09-11   | Practical Lab         |
+|         22 |         2 | 2023-09-13   | Group Discussion      |
+|         23 |         2 | 2023-09-15   | Project Briefing      |
+|         24 |         2 | 2023-09-17   | Case Study            |
+|         25 |         2 | 2023-09-19   | Q&A Session           |
+|         26 |         2 | 2023-09-21   | Guest Lecture         |
+|         27 |         2 | 2023-09-23   | Review                |
+|         28 |         2 | 2023-09-25   | Final Prep            |
+|         29 |         2 | 2023-09-27   | Presentation Day      |
+|         30 |         2 | 2023-09-29   | Final Exam            |
+|         31 |         3 | 2023-09-01   | Introduction          |
+|         32 |         3 | 2023-09-03   | Lecture 1             |
+|         33 |         3 | 2023-09-05   | Lecture 2             |
+|         34 |         3 | 2023-09-07   | Assignment Discussion |
+|         35 |         3 | 2023-09-09   | Midterm Prep          |
+|         36 |         3 | 2023-09-11   | Practical Lab         |
+|         37 |         3 | 2023-09-13   | Group Discussion      |
+|         38 |         3 | 2023-09-15   | Project Briefing      |
+|         39 |         3 | 2023-09-17   | Case Study            |
+|         40 |         3 | 2023-09-19   | Q&A Session           |
+|         41 |         3 | 2023-09-21   | Guest Lecture         |
+|         42 |         3 | 2023-09-23   | Review                |
+|         43 |         3 | 2023-09-25   | Final Prep            |
+|         44 |         3 | 2023-09-27   | Presentation Day      |
+|         45 |         3 | 2023-09-29   | Final Exam            |
+|         46 |         4 | 2023-09-01   | Introduction          |
+|         47 |         4 | 2023-09-03   | Lecture 1             |
+|         48 |         4 | 2023-09-05   | Lecture 2             |
+|         49 |         4 | 2023-09-07   | Assignment Discussion |
+|         50 |         4 | 2023-09-09   | Midterm Prep          |
+|         51 |         4 | 2023-09-11   | Practical Lab         |
+|         52 |         4 | 2023-09-13   | Group Discussion      |
+|         53 |         4 | 2023-09-15   | Project Briefing      |
+|         54 |         4 | 2023-09-17   | Case Study            |
+|         55 |         4 | 2023-09-19   | Q&A Session           |
+|         56 |         4 | 2023-09-21   | Guest Lecture         |
+|         57 |         4 | 2023-09-23   | Review                |
+|         58 |         4 | 2023-09-25   | Final Prep            |
+|         59 |         4 | 2023-09-27   | Presentation Day      |
+|         60 |         4 | 2023-09-29   | Final Exam            |
+|         61 |         5 | 2023-09-01   | Introduction          |
+|         62 |         5 | 2023-09-03   | Lecture 1             |
+|         63 |         5 | 2023-09-05   | Lecture 2             |
+|         64 |         5 | 2023-09-07   | Assignment Discussion |
+|         65 |         5 | 2023-09-09   | Midterm Prep          |
+|         66 |         5 | 2023-09-11   | Practical Lab         |
+|         67 |         5 | 2023-09-13   | Group Discussion      |
+|         68 |         5 | 2023-09-15   | Project Briefing      |
+|         69 |         5 | 2023-09-17   | Case Study            |
+|         70 |         5 | 2023-09-19   | Q&A Session           |
+|         71 |         5 | 2023-09-21   | Guest Lecture         |
+|         72 |         5 | 2023-09-23   | Review                |
+|         73 |         5 | 2023-09-25   | Final Prep            |
+|         74 |         5 | 2023-09-27   | Presentation Day      |
+|         75 |         5 | 2023-09-29   | Final Exam            |
+|         76 |         6 | 2023-09-01   | Introduction          |
+|         77 |         6 | 2023-09-03   | Lecture 1             |
+|         78 |         6 | 2023-09-05   | Lecture 2             |
+|         79 |         6 | 2023-09-07   | Assignment Discussion |
+|         80 |         6 | 2023-09-09   | Midterm Prep          |
+|         81 |         6 | 2023-09-11   | Practical Lab         |
+|         82 |         6 | 2023-09-13   | Group Discussion      |
+|         83 |         6 | 2023-09-15   | Project Briefing      |
+|         84 |         6 | 2023-09-17   | Case Study            |
+|         85 |         6 | 2023-09-19   | Q&A Session           |
+|         86 |         6 | 2023-09-21   | Guest Lecture         |
+|         87 |         6 | 2023-09-23   | Review                |
+|         88 |         6 | 2023-09-25   | Final Prep            |
+|         89 |         6 | 2023-09-27   | Presentation Day      |
+|         90 |         6 | 2023-09-29   | Final Exam            |
+|         91 |         7 | 2023-09-01   | Introduction          |
+|         92 |         7 | 2023-09-03   | Lecture 1             |
+|         93 |         7 | 2023-09-05   | Lecture 2             |
+|         94 |         7 | 2023-09-07   | Assignment Discussion |
+|         95 |         7 | 2023-09-09   | Midterm Prep          |
+|         96 |         7 | 2023-09-11   | Practical Lab         |
+|         97 |         7 | 2023-09-13   | Group Discussion      |
+|         98 |         7 | 2023-09-15   | Project Briefing      |
+|         99 |         7 | 2023-09-17   | Case Study            |
+|        100 |         7 | 2023-09-19   | Q&A Session           |
+|        101 |         7 | 2023-09-21   | Guest Lecture         |
+|        102 |         7 | 2023-09-23   | Review                |
+|        103 |         7 | 2023-09-25   | Final Prep            |
+|        104 |         7 | 2023-09-27   | Presentation Day      |
+|        105 |         7 | 2023-09-29   | Final Exam            |
+|        106 |         8 | 2023-09-01   | Introduction          |
+|        107 |         8 | 2023-09-03   | Lecture 1             |
+|        108 |         8 | 2023-09-05   | Lecture 2             |
+|        109 |         8 | 2023-09-07   | Assignment Discussion |
+|        110 |         8 | 2023-09-09   | Midterm Prep          |
+|        111 |         8 | 2023-09-11   | Practical Lab         |
+|        112 |         8 | 2023-09-13   | Group Discussion      |
+|        113 |         8 | 2023-09-15   | Project Briefing      |
+|        114 |         8 | 2023-09-17   | Case Study            |
+|        115 |         8 | 2023-09-19   | Q&A Session           |
+|        116 |         8 | 2023-09-21   | Guest Lecture         |
+|        117 |         8 | 2023-09-23   | Review                |
+|        118 |         8 | 2023-09-25   | Final Prep            |
+|        119 |         8 | 2023-09-27   | Presentation Day      |
+|        120 |         8 | 2023-09-29   | Final Exam            |
+|        121 |         9 | 2023-09-01   | Introduction          |
+|        122 |         9 | 2023-09-03   | Lecture 1             |
+|        123 |         9 | 2023-09-05   | Lecture 2             |
+|        124 |         9 | 2023-09-07   | Assignment Discussion |
+|        125 |         9 | 2023-09-09   | Midterm Prep          |
+|        126 |         9 | 2023-09-11   | Practical Lab         |
+|        127 |         9 | 2023-09-13   | Group Discussion      |
+|        128 |         9 | 2023-09-15   | Project Briefing      |
+|        129 |         9 | 2023-09-17   | Case Study            |
+|        130 |         9 | 2023-09-19   | Q&A Session           |
+|        131 |         9 | 2023-09-21   | Guest Lecture         |
+|        132 |         9 | 2023-09-23   | Review                |
+|        133 |         9 | 2023-09-25   | Final Prep            |
+|        134 |         9 | 2023-09-27   | Presentation Day      |
+|        135 |         9 | 2023-09-29   | Final Exam            |
+|        136 |        10 | 2023-09-01   | Introduction          |
+|        137 |        10 | 2023-09-03   | Lecture 1             |
+|        138 |        10 | 2023-09-05   | Lecture 2             |
+|        139 |        10 | 2023-09-07   | Assignment Discussion |
+|        140 |        10 | 2023-09-09   | Midterm Prep          |
+|        141 |        10 | 2023-09-11   | Practical Lab         |
+|        142 |        10 | 2023-09-13   | Group Discussion      |
+|        143 |        10 | 2023-09-15   | Project Briefing      |
+|        144 |        10 | 2023-09-17   | Case Study            |
+|        145 |        10 | 2023-09-19   | Q&A Session           |
+|        146 |        10 | 2023-09-21   | Guest Lecture         |
+|        147 |        10 | 2023-09-23   | Review                |
+|        148 |        10 | 2023-09-25   | Final Prep            |
+|        149 |        10 | 2023-09-27   | Presentation Day      |
+|        150 |        10 | 2023-09-29   | Final Exam            |
++------------+-----------+--------------+-----------------------+
+150 rows in set (0.00 sec)
+
+mysql> select * from enrollments;;
++---------------+------------+-----------+
+| enrollment_id | student_id | course_id |
++---------------+------------+-----------+
+|             4 |          1 |         1 |
+|             2 |          1 |         2 |
+|             3 |          1 |         4 |
+|             1 |          1 |         6 |
+|             6 |          2 |         4 |
+|             5 |          2 |         8 |
+|             7 |          2 |         9 |
+|             8 |          3 |         3 |
+|            10 |          3 |         6 |
+|             9 |          3 |        10 |
+|            11 |          4 |         2 |
+|            13 |          4 |         3 |
+|            12 |          4 |         9 |
+|            15 |          5 |         1 |
+|            17 |          5 |         5 |
+|            16 |          5 |         7 |
+|            14 |          5 |        10 |
+|            20 |          6 |         4 |
+|            18 |          6 |         5 |
+|            19 |          6 |        10 |
+|            22 |          7 |         3 |
+|            21 |          7 |         5 |
+|            23 |          7 |         9 |
+|            24 |          8 |         1 |
+|            26 |          8 |         4 |
+|            25 |          8 |         9 |
+|            28 |          9 |         1 |
+|            29 |          9 |         3 |
+|            27 |          9 |         6 |
+|            30 |          9 |         8 |
+|            32 |         10 |         4 |
+|            31 |         10 |         6 |
+|            33 |         10 |        10 |
+|            34 |         11 |         5 |
+|            35 |         11 |         6 |
+|            36 |         11 |        10 |
+|            37 |         12 |         2 |
+|            38 |         12 |         7 |
+|            42 |         13 |         1 |
+|            41 |         13 |         3 |
+|            39 |         13 |         6 |
+|            40 |         13 |         7 |
+|            43 |         14 |         3 |
+|            46 |         14 |         6 |
+|            44 |         14 |         7 |
+|            45 |         14 |         9 |
+|            47 |         15 |         5 |
+|            49 |         15 |         8 |
+|            48 |         15 |        10 |
+|            51 |         16 |         1 |
+|            52 |         16 |         3 |
+|            50 |         16 |         5 |
+|            53 |         16 |         7 |
+|            56 |         17 |         5 |
+|            57 |         17 |         6 |
+|            54 |         17 |         8 |
+|            55 |         17 |        10 |
+|            59 |         18 |         1 |
+|            58 |         18 |         3 |
+|            60 |         18 |         4 |
+|            62 |         19 |         2 |
+|            63 |         19 |         3 |
+|            64 |         19 |         9 |
+|            61 |         19 |        10 |
+|            66 |         20 |         1 |
+|            65 |         20 |         5 |
+|            68 |         21 |         5 |
+|            69 |         21 |         8 |
+|            67 |         21 |        10 |
+|            71 |         22 |         5 |
+|            70 |         22 |         7 |
+|            73 |         23 |         1 |
+|            72 |         23 |         2 |
+|            74 |         23 |         7 |
+|            78 |         24 |         2 |
+|            76 |         24 |         3 |
+|            77 |         24 |         6 |
+|            75 |         24 |         9 |
+|            79 |         25 |         2 |
+|            81 |         25 |         5 |
+|            80 |         25 |         7 |
+|            85 |         26 |         4 |
+|            83 |         26 |         5 |
+|            82 |         26 |         7 |
+|            84 |         26 |         8 |
+|            87 |         27 |         7 |
+|            86 |         27 |         8 |
+|            88 |         28 |         3 |
+|            89 |         28 |         4 |
+|            90 |         28 |         6 |
+|            93 |         29 |         4 |
+|            92 |         29 |         7 |
+|            94 |         29 |         9 |
+|            91 |         29 |        10 |
+|            98 |         30 |         3 |
+|            95 |         30 |         7 |
+|            97 |         30 |         8 |
+|            96 |         30 |        10 |
+|           100 |         31 |         2 |
+|            99 |         31 |         4 |
+|           101 |         32 |         3 |
+|           103 |         32 |         4 |
+|           102 |         32 |         7 |
+|           104 |         32 |        10 |
+|           105 |         33 |         1 |
+|           107 |         33 |         2 |
+|           106 |         33 |         5 |
+|           109 |         34 |         4 |
+|           108 |         34 |         5 |
+|           111 |         34 |         6 |
+|           110 |         34 |         7 |
+|           112 |         35 |         2 |
+|           114 |         35 |         3 |
+|           113 |         35 |         4 |
+|           115 |         35 |         7 |
+|           116 |         36 |         3 |
+|           117 |         36 |         7 |
+|           118 |         37 |         2 |
+|           120 |         37 |         4 |
+|           121 |         37 |         8 |
+|           119 |         37 |        10 |
+|           123 |         38 |         5 |
+|           122 |         38 |         7 |
+|           124 |         38 |        10 |
+|           128 |         39 |         1 |
+|           125 |         39 |         3 |
+|           127 |         39 |         5 |
+|           126 |         39 |         9 |
+|           129 |         40 |         1 |
+|           130 |         40 |         3 |
+|           131 |         40 |         5 |
+|           132 |         40 |         7 |
+|           133 |         41 |         4 |
+|           135 |         41 |         5 |
+|           134 |         41 |        10 |
+|           137 |         42 |         4 |
+|           136 |         42 |         6 |
+|           138 |         42 |        10 |
+|           142 |         43 |         7 |
+|           141 |         43 |         8 |
+|           139 |         43 |         9 |
+|           140 |         43 |        10 |
+|           144 |         44 |         5 |
+|           143 |         44 |         7 |
+|           147 |         45 |         3 |
+|           145 |         45 |         6 |
+|           146 |         45 |         8 |
+|           148 |         46 |         1 |
+|           149 |         46 |         3 |
+|           150 |         47 |         1 |
+|           151 |         47 |         5 |
+|           152 |         47 |        10 |
+|           153 |         48 |         1 |
+|           154 |         48 |         8 |
+|           155 |         49 |         2 |
+|           156 |         49 |         3 |
+|           158 |         50 |         3 |
+|           159 |         50 |         5 |
+|           157 |         50 |         9 |
+|           160 |         50 |        10 |
+|           163 |         51 |         3 |
+|           161 |         51 |         4 |
+|           162 |         51 |         7 |
+|           164 |         52 |         1 |
+|           165 |         52 |        10 |
+|           168 |         53 |         2 |
+|           167 |         53 |         3 |
+|           166 |         53 |         9 |
+|           170 |         54 |         3 |
+|           169 |         54 |         4 |
+|           173 |         55 |         7 |
+|           172 |         55 |         8 |
+|           171 |         55 |         9 |
+|           174 |         56 |         2 |
+|           176 |         56 |         6 |
+|           175 |         56 |         9 |
+|           177 |         57 |         2 |
+|           179 |         57 |         4 |
+|           180 |         57 |         5 |
+|           178 |         57 |         7 |
+|           181 |         58 |         6 |
+|           182 |         58 |        10 |
+|           184 |         59 |         1 |
+|           185 |         59 |         2 |
+|           183 |         59 |         3 |
+|           187 |         60 |         2 |
+|           188 |         60 |         4 |
+|           186 |         60 |         6 |
+|           191 |         61 |         1 |
+|           189 |         61 |         3 |
+|           190 |         61 |         7 |
+|           194 |         62 |         1 |
+|           193 |         62 |         3 |
+|           192 |         62 |         8 |
+|           195 |         62 |         9 |
+|           197 |         63 |         9 |
+|           196 |         63 |        10 |
+|           201 |         64 |         4 |
+|           198 |         64 |         5 |
+|           200 |         64 |         6 |
+|           199 |         64 |         7 |
+|           202 |         65 |         3 |
+|           203 |         65 |         8 |
+|           205 |         66 |         2 |
+|           204 |         66 |         8 |
+|           206 |         67 |         7 |
+|           207 |         67 |         9 |
+|           209 |         68 |         2 |
+|           208 |         68 |         5 |
+|           210 |         69 |         3 |
+|           212 |         69 |         4 |
+|           211 |         69 |        10 |
+|           215 |         70 |         4 |
+|           214 |         70 |         8 |
+|           213 |         70 |         9 |
++---------------+------------+-----------+
+215 rows in set (0.00 sec)
+
+ERROR:
+No query specified
+
+mysql> INSERT INTO users VALUES
+    -> (2, 'gabriel367', 'scrypt:32768:8:1$T1Ji2wNGj13EJzzr$526664126892e2e63e3efe39335ed7c26163954cc0a6bc90a843774099bc3db3b5d208c94e4dc955be04a4c8dc0064cca7533342ddeee747ca006d3596f54391', 'Teacher', 2, 1),
+    -> (3, 'kim197', 'scrypt:32768:8:1$IBvnnL84j8rhx9dK$ca49dddb63cbc56ab2958cb16aa96bccf026afa4cf50c883c4623ce8c3d1cb37ec66d02ab0655d839f8ceb405624bc01abaa095028bcc62bff394737f92041d9', 'Teacher', 3, 1),
+    -> (4, 'lori667', 'scrypt:32768:8:1$4mph78SbGTo6tKTb$70646b32ca9188ef1279e6c8f967582bba8b59d7016c79fb8ea0140baed8ec5e05459ff8cab18db14e1ec19d296790b05c7818923314e664841f8b43307d03ba', 'Teacher', 4, 1),
+    -> (5, 'kelly148', 'scrypt:32768:8:1$mBQLIwNz2Zd4a21J$db3f396c1bd8bef06851e72ea4ddee4a9096413c231763b94a324dd4bcabca69453b1c50311ef4aafac9a8d396292d9c8a75d3eb9031bd489ad227391ae2a457', 'Teacher', 5, 1),
+    -> (6, 'charles222', 'scrypt:32768:8:1$hxsBbXPCnpKofUmB$e662ba4b428ad38edb252ce8c7f0279bc4c9e48a2c64c785a5c2e913982d1874299f927ab7d4866565362c2cac95dd1e99013fedee07ad5497320d1cb9090d20', 'Teacher', 6, 1),
+    -> (7, 'dr.521', 'scrypt:32768:8:1$aZ4saK1wsZHMqCxW$7e79f35943ca273c6228c50739cad547ed05fb11193b410c62b7662042d2a9eb2a7e13add5b0d4ae5a7878e9a6b2f2b0de252e41e9c63ebba89a788629be3703', 'Teacher', 7, 1),
+    -> (8, 'samuel454', 'scrypt:32768:8:1$RdNwWRf5dVruvEwi$22fd74635dbc860d4dfd78990d548879353d85966fba79d063ce60fd87f86439982eb7b98f2479f46ba3969a2f2bae00e69c4888d6b2b479348d5c8b9aede746', 'Teacher', 8, 1),
+    -> (9, 'dr.980', 'scrypt:32768:8:1$xIznuG9f7ZYt7OvF$12cd45b132d17108602f2735869f44d87591319432fd0bb8795b99a0aa1d53c0f2787ae12f03694d0f0133942d3e26ca2299016dfefdd6f239470ace8233f34a', 'Teacher', 9, 1),
+    -> (10, 'richard268', 'scrypt:32768:8:1$cW2n79wVSDZKrQoc$580502b8568055235246cc41172fec5eff710841b339e4d40227bb2020361a0ee914baff5586b72aaacb38ac5625ce527e88bae47b2459cc4121697f9cfaf206', 'Teacher', 10, 1),
+    -> (11, 'andrea577', 'scrypt:32768:8:1$hTcKS0ZG8X8quVVf$bd257576d108bc10dc8d2ddf7c765c3d56d756533b8eee9ab91370bc1721296e7afc2b14f1e94f214f8c64fc153aa8c34c33a9ac47a87da76ff95f0e36cd3528', 'Student', 1, 1),
+    -> (12, 'nicholas788', 'scrypt:32768:8:1$RvYuVAj7c2CXCIwz$2cddaa809c5940894ea5101b1dd84c440fec317573c0ba199f968d38561c3f6de742ad0a4181cb4caa4be925d1638731b5b7cc55a57c4383c58609aaacae7769', 'Student', 2, 1),
+    -> (13, 'matthew257', 'scrypt:32768:8:1$GjX6jgyLM44ANqV2$56375be49c31b48df25ae28ea425c79bc42bafdadb3000507ec42e22d16b615a6d25d3b498aacaedbe073be85cb4998b474af6fd104814916960ea9370b009af', 'Student', 3, 1),
+    -> (14, 'michelle572', 'scrypt:32768:8:1$qIbgJsFyIHfk10K3$f2b9505917cf88ad913fc351b221671f75d1397131309c1cd16b5001d62406420100b2ffae1e5631bcd44d2d1b97c34161529e8c5c903f3c7eb5ce59cdff9013', 'Student', 4, 1),
+    -> (15, 'susan672', 'scrypt:32768:8:1$ANe2HiT20fHLhnCR$6c459ee7e3029277bc00f6073cc9eb58ff2c5973f9b29d4c9767ab8ff42b7d1bf86c73fa4b3f59c3e7d2e468260b08d4b9776c1fdd9e7330841768aa2bcf6222', 'Student', 5, 1),
+    -> (16, 'dylan664', 'scrypt:32768:8:1$E867ZIV3jl5aeR5M$1cd1ecd8eb878c40a7f8af1827a5d8fccb010c4b25ac2df641d8053e4eaedc78dd08e24d4cd2c5e772995b5c5131af820f71437b9a87cf4c438172cd6d8f4e9b', 'Student', 6, 1),
+    -> (17, 'robert552', 'scrypt:32768:8:1$yQjSdZC5n63Bc0OR$eb3ccde2b5c25cbe84c00b3178cf8c5715ce401ea89a1e097c5a3478c01886ea942356b8c7f84e3af9faa209dfc9bae4e8ee707bb724c2a9c8e5dfcfd888b868', 'Student', 7, 1),
+    -> (18, 'mr.861', 'scrypt:32768:8:1$WRD2s8fVKRAoWF4L$922a408ff49009e03634df1b4cfcae12b05ac32135e4f7b8aaf37b632eb4fcfbe94efd29194d8f0136099b758f238a66b28ee22fb714376deaf1d1c23bf0a9bc', 'Student', 8, 1),
+    -> (19, 'courtney893', 'scrypt:32768:8:1$0FPNNVb9pss3NfC8$cfe644e947aeae602864d7c2e982c7306ee4b944381d4cb6b35fdb6cc5ecb0ced6e609e37c4ecb3db8ceadcf650ac8ddbe35e931ebb37107cf939f3b7b00f4a6', 'Student', 9, 1),
+    -> (20, 'ashley822', 'scrypt:32768:8:1$5FVGRcwfkSOKcaWv$a45c5a9abc83ee1089f2c123a9cc43238a939ea6a39ba0d28fc0ad49aeab046d78e73d3b17ca65ae84e68c83144cca193244f54e6a62c46ca6bf9af89967ada2', 'Student', 10, 1),
+    -> (21, 'jessica593', 'scrypt:32768:8:1$W9XDcwOLJjdLiyET$e3c17e5909066227ba49b523c1b22901f2578d6c3c1150acaa8cb637a1da5c7a477c857ada626bfb68c26abf0545dca36fd2ce48aa56f24ed45b2cdcf9eea024', 'Student', 11, 1),
+    -> (22, 'joseph366', 'scrypt:32768:8:1$nl5cAto6A0Tw0e6z$941cd17fa63726c3ad838c0c35286bfb10f7d38b4d8255d131dd0b8fd14b4ac2c3354f50d96766e69aed741f638eba251f7837b6d480a148f6d8ada0b90f5f4d', 'Student', 12, 1),
+    -> (23, 'benjamin851', 'scrypt:32768:8:1$E3YEhB7qknQoynKc$d57944d72c21c9669baf578d18b9b0816b13ba8128a680f9af58356e0439d14a031f9a979185c9b4c29d226d8ccf56b5980068d593a6a770282370c4b155dc4d', 'Student', 13, 1),
+    -> (24, 'bruce752', 'scrypt:32768:8:1$qswS6LteIDQe8AQO$c7bd93a44725bf3f3331143f9ba2b7b27da280ca344bc3f09c3852933fcfd7f066a6fdbbed18ab3e43d8d26cd7f20ac38981d5b5a882b4f2d5d2f113fad632cd', 'Student', 14, 1),
+    -> (25, 'victoria558', 'scrypt:32768:8:1$Dz4qJWDJes5gRYdK$ab45add3919cca28f2004faa8b25333110c5bc820c761f3bc6af2cd746b9e3f9153cc0f367996f9be08e9af6a6bf2af41bc15eaf4161c50ed8cb3fc2e93bd321', 'Student', 15, 1),
+    -> (26, 'kristen448', 'scrypt:32768:8:1$A7x4vDeHqKpsbYZy$ef670147c61002926b88bd10a3e3f808cf0e9c598a38e5a52a70be4e855ff9042b9ac2991779978fecb2cf83152fb53d8ce37e165d0ec42dfe91817afdae7ce3', 'Student', 16, 1),
+    -> (27, 'dr.427', 'scrypt:32768:8:1$t4QZLQH9oy5uETdl$4d20bbb6d73d8f81e9f1eb8276785e31cf0437b6b52b2ec21e750b795e16afdccb95c1a686e8fd7266cbc97501383f599ee63d187190c900a74bdc26b702bcd1', 'Student', 17, 1),
+    -> (28, 'christina339', 'scrypt:32768:8:1$tZRIgONcQiGCxpox$eaf6f8f053f3a868a19e5cc3016432e8cfee11e871e182d2509db95c33651faf757bdc67dacc6c1520c2405fbb429980529b9dbd7948aca70eb86684ee05a6bc', 'Student', 18, 1),
+    -> (29, 'laura727', 'scrypt:32768:8:1$xxOF1N3RfM8mTnzO$a77edb722f49f305a476a91e7fbec00bb09e0e27f9d13f23e9d7056e789e8489a698577d473d250aabddfa495a9f486d3ee81479a5a3f642f31eada1b54695ad', 'Student', 19, 1),
+    -> (30, 'lisa212', 'scrypt:32768:8:1$jAoZXAsAaQO11OMO$adc53626a1973988caa4628bfd8e48413dd74601b5c7e7a1c3bfa9d2550c229981b608eccc9e431b0a5a45ef03b197528459845b3043e6ede7f3f3909e65f0cd', 'Student', 20, 1),
+    -> (31, 'stephanie975', 'scrypt:32768:8:1$MVSc4R6TSJ6etJyT$689aaee6ea69c333d199b98ed75be4ef0e18a68a24314f1bf53b9bee815d26f7e43b64701b4051333f87e69a46edbd1e599db9501b8692c46781b4833d5107b0', 'Student', 21, 1),
+    -> (32, 'courtney896', 'scrypt:32768:8:1$ejNHBLW8H5rDcKwK$3877e53352e7317e8d70e584db1678ae468620245835024bbc9acec6197eee537c05afad3064dddd1413455717f163ca0b76a3399d28258fecf5d189bd2321b3', 'Student', 22, 1),
+    -> (33, 'dale688', 'scrypt:32768:8:1$Az5bTjbF24M5OBc5$5126abc8b44e2e175998fba0079979f43b031d46af47990b39b7b18f222178601afc412da361d4603a3913cf1aa76b2dcb49d20c6cfd21dfc7175bc0aae73289', 'Student', 23, 1),
+    -> (34, 'roger130', 'scrypt:32768:8:1$DRlW6K0WlXzzQFL0$988d4e8c9969c37f029fa4bbb91cd4feb382d97162df8aa9926745b36d2dc9ff700f736b768433c0918b7a6651297139b72da013c64b97a3bca500d25b76bc32', 'Student', 24, 1),
+    -> (35, 'gary569', 'scrypt:32768:8:1$XZjwI4BnTiQ1bkfI$bf677e8402d02a29fdb7f923f55176bbcd6377a70176af59ac57052ed0fbeb6a5ccdac3120850eb8017f1703f7032ecde5ce6f2186bae11a7d108abf75469637', 'Student', 25, 1),
+    -> (36, 'maria986', 'scrypt:32768:8:1$CXDHmGYhMHRFJap1$ada471863d099db0be6fe4e6bc85f157a71b8b6e787ddf763c6b94110bce87cfdd90b21d1ff2f5944cdb27c4ab8886f441b8f8f0c5d780768e2de895a22b5a37', 'Student', 26, 1),
+    -> (37, 'brent990', 'scrypt:32768:8:1$JeXaAuqJD5amA7Oi$bf63231ea6a0b00b014d1f2eb44dfd1c4872dba3dc69ae69dd6a5a7a6cf19ea343008a75e474ae6c6963dba6445110283150541a64d3c821273be8d41e6f28cc', 'Student', 27, 1),
+    -> (38, 'yvonne848', 'scrypt:32768:8:1$vr7ZtxCW9SiAc88R$6d6df82abc2534a15d3f8ff4b6e631470418ea0fd5dc67623cffcfd5a77f7c3ce94555556cb31007d0801811a967f7f6325c37f8ebc48ecc50b408ccd566755c', 'Student', 28, 1),
+    -> (39, 'jose257', 'scrypt:32768:8:1$VTHSianKmu1N8N5X$be1e1f6cdaec0e7280bfa46c66814c629bd4c38ddf7d0411acfd054489fd2677841636903c88712695538a2485cc37ea7f7f9a3bff02ed596ae9d859778c3eeb', 'Student', 29, 1),
+    -> (40, 'patricia986', 'scrypt:32768:8:1$aEAc41KIc5uqOk82$ad9f16b1084750a686c61568d26cff6e9ee1abeee926e968a7d0d535b3e69ba33fcb6640975a98df1f9cc35d65a3e9c9fd290dd64af7f6820b5e61eabdc3b5ba', 'Student', 30, 1),
+    -> (41, 'michael903', 'scrypt:32768:8:1$4C1lnjbbZLkThgyF$98d7bb9f426c53a8859929648ef1d9456d8715a3cae5d016ca26190449e4ebd3ccb14e9eaa813d7b470c91143842054eab721d4f72edcc84a8a4cd764928d0ca', 'Student', 31, 1),
+    -> (42, 'claudia242', 'scrypt:32768:8:1$Xjo1ARTRaieSbwaS$01b37b4fa3d08be3e864675194aa34263a1cac520593617fca17d4bbc86e27968bf009d0f104d88d8c3de603973b7012d38e2f68a68c990828739713c10b3e36', 'Student', 32, 1),
+    -> (43, 'wyatt800', 'scrypt:32768:8:1$BfV3ETKJr1QY0Hta$452b83adc2aab54feb66d7a8a6deeafa30b290a58e94d9ec4a3b18b328385a2416f62814d0be19162a82df592f4d6ff3430bd1d1460ad5b5c5a4de6d8a9f591b', 'Student', 33, 1),
+    -> (44, 'zachary828', 'scrypt:32768:8:1$O2f1MtAgSg1W6OKT$7037a658c7f4f121deb75dc2f80a5dfa4cbb387a6ebebc0c14eca9311f24dbb8cbc126bc3bc5b0cc5f4d834914386495af03f692af8d8674d3a1393208cef97c', 'Student', 34, 1),
+    -> (45, 'robert234', 'scrypt:32768:8:1$39B2y9Vh12AkRitM$93b119869d3e1556bf4a7b514d6f78189fb6c4ba19636a1f3b4ae86cce1ce7750acc468ffca84f513f3a0cd20fd7cd52844fc930e2089c44a7da273018cd815c', 'Student', 35, 1),
+    -> (46, 'jason891', 'scrypt:32768:8:1$OvY1A68WExLZnxOA$2527a6c469d01f8f68f8a2aa74c7dba484c7aedf6655390db95a05e5ae17be1283d3faa40fc7369278f4a574873da1f0424c6a4d3964bcbde3e8d9929f322ee5', 'Student', 36, 1),
+    -> (47, 'connor695', 'scrypt:32768:8:1$BsVjwd4V2jumvyT0$085656e378952ba78850f22a2924cd0faa4c4c720cd78d041e724054f01375fa32669ab0ed37e99349a573b0e8f61138660571fd889b1720ad5ce561f44b145e', 'Student', 37, 1),
+    -> (48, 'ian826', 'scrypt:32768:8:1$dc9BiKZijNs10n1t$0859c0dffe8cf812ab834d70bb52d6b0fd5191227beb5f668e5c9baeeb1c49179e6d36f0ffa73cfdd1ddf736fdc2dc2701c584ddd6d7a52052f33b265971f6ad', 'Student', 38, 1),
+    -> (49, 'brian847', 'scrypt:32768:8:1$IUksOh0pMnRZ7kKp$cbdddb1c49a4db91c452b729f50482ba0bbe4a4019c710a47931fd55084f7158446b7747f958f0023e0c0200fe2e082c004015d0065898a7226a4d571cc84703', 'Student', 39, 1),
+    -> (50, 'robert435', 'scrypt:32768:8:1$acuB7f6TzmK247Ae$5ad383ca6eb9a611e395d23c85b7aaf3dbeaf67f2d97008c497cdb4d3e8b1d7a4257d3c5cb40e2ab15f8f5bae9201c000496e02ce1879d9b59e021b5b48e7849', 'Student', 40, 1),
+    -> (51, 'bonnie738', 'scrypt:32768:8:1$4QQzxdRwjFESTVnG$4a5b47327ab43f59076e58961c6f9f6a53a7597ef14982b5794b92c2a69ae014751ab8f61385a7e1a71cc3704874e52b3ef74bdf219c2bd3d60bc63b184f9d7d', 'Student', 41, 1),
+    -> (52, 'robin680', 'scrypt:32768:8:1$HVin4Bzf8bDKGcOO$c5c8e16567705a286b2f3032f9af7ba701a3c8492c9085a1e323a21f4aeb069dc8aac8ededeffeb3098bb5f539b1796b236def51f0ba49d9c16ca3054be5637b', 'Student', 42, 1),
+    -> (53, 'austin431', 'scrypt:32768:8:1$pHKzuG8FuD0c7hPJ$b7af44e52cabc5ab18aede137cc38f4efecf6f0e0dcbf75aed8635484678b92167c38bc85443b5a799c7db54297524b7a640c5e5234444827673cdcd3978ef47', 'Student', 43, 1),
+    -> (54, 'felicia342', 'scrypt:32768:8:1$b2mKA17mtUWZr342$85a37302cdfbe48c60bbf5c34bfa1ebb578c38d3c7ed1a3a4b6018a6287bdeee73d52ad7bccebacdf713144817abeed3a4b7d8a430e4c0c4f18e52eca4aec065', 'Student', 44, 1),
+    -> (55, 'lisa871', 'scrypt:32768:8:1$uXMy8QVMVMkjDu0w$55a8c6721a55214daf150c0978ae953e3f424fc7eebeeac087307d6814473ee4bd4648b3934d55a67b6a3a1bb449f1ac1c5a3825ce21f195b7a93ef08327e00d', 'Student', 45, 1),
+    -> (56, 'kaitlyn128', 'scrypt:32768:8:1$PNk621ZPldOSg5VL$095500ed4af6450d301bb048036b976de573429c6b1aa83e087921f48f3dd3bb98564955b5c54e336fbf9a4e2010b865788da56aefd7a7d3d6c7318fedaff033', 'Student', 46, 1),
+    -> (57, 'william966', 'scrypt:32768:8:1$jgJgHRAbAXompHyT$15bda437ff0c72d6abf5c6b64631936a3a7bd5c3ec2ac384dc67893835699ba00bc63e9ec2fb968d75585685f7be5789f11ae503bc26f79d0fae5941987b3a60', 'Student', 47, 1),
+    -> (58, 'william697', 'scrypt:32768:8:1$Apoyi3aRqPwACoje$e5360c2e319b36a0d0da584fec77ab190b63fd270cad9aa1be2bbedd0d5f0640186337c767f2178cf7e9ccb82529e4e40cffdfbe8b07b0dd9760078f03efbfcf', 'Student', 48, 1),
+    -> (59, 'ryan708', 'scrypt:32768:8:1$IsqQkBjCzuKjmFxf$bf9f8615d09011688f44dd284f2f19e5a43de34483e46bd4e1ad67d1047b1103e5a5c71fd7a5f2d185e19adfadbee0e9ea41df43484728a35fef90a51a8e2f8b', 'Student', 49, 1),
+    -> (60, 'pamela886', 'scrypt:32768:8:1$vOlsyZ6U8XLB2GmV$f75c1075c4f32b2f37d74a72e2eb985e2ba04843599a4a70a219236d9fc0267e655e7640b38fc6efc7374844ec58bbe7f9cdbee7250779031aec4bb698a4fb7e', 'Student', 50, 1),
+    -> (61, 'james186', 'scrypt:32768:8:1$vVwlt3OU9ImK5Txv$9604f224b43efc2955585191b69dfad2b566baa19996c3e8b5ba1cd514c78a5bcc0b384fa954d74de8808c430ce2b77a461f99cee578ea9306d39ff2110419c9', 'Student', 51, 1),
+    -> (62, 'patrick454', 'scrypt:32768:8:1$IPNcWK9osB7ZjREW$71c6b6e9f429915e13ffa34b239ae4b85c6113aca298f08f481070f8833006856ea2c7f29e70fe458f1f1573a9b901006943262029d17252ff6738c83c49e24f', 'Student', 52, 1),
+    -> (63, 'john901', 'scrypt:32768:8:1$XdSePmf8jOBCTDbg$89adce3a30a7ea350a0f517a9c90bf6969f4f7dd0ba415385d23eb21e6e256cc12ac288a62b60127e8cf0f6621e249fadf5ff7929c609e682f17e3348366ee75', 'Student', 53, 1),
+    -> (64, 'mr.736', 'scrypt:32768:8:1$0fRUjPSHt1er3yD6$27577eeca384eb87c575f6ca09b9863abc2be273359128a09694d8b7a442d0de54376ff6cb66b21d0bb20ca9faee8fc47be7e43773abee9b50934c7e0d73e6ed', 'Student', 54, 1),
+    -> (65, 'alexandra369', 'scrypt:32768:8:1$6Hmj4weBmbxAMaWd$f245b651e9c8e101a504c14b239989b7b61981c87ce0bc51d13a9dc27a208acd57a742c7384079ea4d56deafd0a72b666738c06acf5db9175c8408fe53fe20f1', 'Student', 55, 1),
+    -> (66, 'sarah956', 'scrypt:32768:8:1$z1bOuCMyVIPWQk8h$0496f9db0e29b5df24cc15f5e53ca682490bbff7784e4a3c51de9d38101fc451bdd63d711cd89da887452b76c09aaf59a726e4110a9d609da8763bf2f81b15a9', 'Student', 56, 1),
+    -> (67, 'nicole642', 'scrypt:32768:8:1$73ylKgo4ZLu9OsVe$f2da3ef5d75173b82a9204d18ac4442fb6b45696214e23f81b944eaa5a12833e8d7d6a9fe3e079a04e1209cb713bdecf11342b26d7cc4b407830c5b63df21e84', 'Student', 57, 1),
+    -> (68, 'charles846', 'scrypt:32768:8:1$h7XrQCgKSIZFic4v$a754fe63f2bb127565508b4905d91ff839dccdfb9f621ffa7795026c2331b7b72d7a192d366098c157c0ed91660e04acf7d5cd6b3db91d1d1cd34e0966df35a2', 'Student', 58, 1),
+    -> (69, 'patricia730', 'scrypt:32768:8:1$vmlVMsx5O5QpBY9W$21f3d6efbf5a040669a529f730505febe6e4cb983512fceb12bad965a470ce4dc62744b934b5d06efb3c5660c107e170810c9e04cebf9d1f909b6bedf2058d33', 'Student', 59, 1),
+    -> (70, 'robin878', 'scrypt:32768:8:1$NFlbO6bsgftW45UT$2dc6e9fbb4fc0a31a8f715712dbec0f7ef1361e10f67e966acc6bfcb63f355d440b87c598a7705ff5a842fbd4178a6330132afa9e175807de8fa585f4fbe8cbc', 'Student', 60, 1),
+    -> (71, 'rachel449', 'scrypt:32768:8:1$7SAnaCMcnp2cCipQ$978f7e432a220f8a0bb9de65b2b1b4100dd256a0eed39e24fb70d79cbbf31b6bd1ac1148cbceedbf0d5cc67d6b84ade5dc5a630e9bb7c9ba2257eb7c584a0513', 'Student', 61, 1),
+    -> (72, 'mark813', 'scrypt:32768:8:1$CFvTykil1zXCduQ3$799c95314212b5f7f9ef7dd9a596338925ddfcbcd993f8846bb5d0b9e51c056849ce7e4665a8c1610e69ce1143890adff726da3d02209b980f3403eb0e2b38dd', 'Student', 62, 1),
+    -> (73, 'michael274', 'scrypt:32768:8:1$EXMJkxkH7jdT7O8l$8b3ed9464cafeb4f21ced1bd30e3a55ee9ca61fe75aa4d1bef6e44696e25f5f69bbd995a0481b377d543d24151ed2b1c198b31156c906d2eec8221bdce953eba', 'Student', 63, 1),
+    -> (74, 'donna233', 'scrypt:32768:8:1$nzMvlN6C7pV5WwHq$676f82bfb32626cf43f65193efa5ea72f049030a44f79bbeb9cbdd83fec86ebf81bda44998e326f1a0c7811d978fdf7b5b03b46833fb042d67552e6de6fc862a', 'Student', 64, 1),
+    -> (75, 'jennifer275', 'scrypt:32768:8:1$WdpLKtNIOT31005n$c77dd34b891f1e6bd7e127cf1ed05beb1b38a54de1eabceeb7583b3e3ca9e0196b5dc62253ad4c3e6fa8a34d666be2e49a142fe9252c61d07f8b7406090270cf', 'Student', 65, 1),
+    -> (76, 'rachel208', 'scrypt:32768:8:1$wcOCa1BqKplYj9De$c0cac9193b615abfc11b4cfada6b62cc5133b9b2fab5016f8f04b05c75c24821321fb6d7312db21d5f87447a63f688658b2ad11b9b689fcb42a596963fafdf1e', 'Student', 66, 1),
+    -> (77, 'austin903', 'scrypt:32768:8:1$oYFnmyPRRJIeQyJE$fbbe4c12a238f3160105977bc1284fdf40c11f3aded8b752d32e4092b99dd7c3edd76d053fe4868ff4a84b12f89fe535cc1ec608f74c1db71fcb356169070bf6', 'Student', 67, 1),
+    -> (78, 'michael429', 'scrypt:32768:8:1$qbgEvbsKs3NmHDnN$1a240648c7fb85edf9d89b89d86c2a99e8eac3224947f243bade9c744a1ea5719f61f977952496f60f7a33323bd0c98d5456a11b3c6b42a3d52a754f32e0db37', 'Student', 68, 1),
+    -> (79, 'hannah219', 'scrypt:32768:8:1$mbuwVxvPleuSYsr1$46dc30502b32af541aa8ce0a094c8a6c5810e8bacadc3f09f1a14202d44b8a1fa9b644155c5d7b5eae91da75d3e21c6b54d60e484e3a27c6eb55f3af6eec7e07', 'Student', 69, 1),
+    -> (80, 'paul663', 'scrypt:32768:8:1$d3JMVEcLU62y6DxX$19d44e52ecf84de627d537a90df470edf1e95cbeb62913e7487714228175b4435e4a03716d1af055a7254f784cdfcb94ec8d0794d4237bf648df0b090d7d3563', 'Student', 70, 1);
+Query OK, 79 rows affected (0.01 sec)
+Records: 79  Duplicates: 0  Warnings: 0
+
+mysql> select * from users;
++---------+--------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+--------------+-----------+
+| user_id | username     | password_hash                                                                                                                                                      | role    | reference_id | is_active |
++---------+--------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+--------------+-----------+
+|       1 | teacher1     | scrypt:32768:8:1$ViF5qK7eGkW2Cc7n$171d2bf945b78d734747c9dabe7bcd6988ed64343a0419a549292e20c86e59cf72deb9f1d6118111c7b5c9696fbb474ca1bc5ed71c29804eabcfd7dbc9cab7cf | Teacher |            1 |         1 |
+|       2 | gabriel367   | scrypt:32768:8:1$T1Ji2wNGj13EJzzr$526664126892e2e63e3efe39335ed7c26163954cc0a6bc90a843774099bc3db3b5d208c94e4dc955be04a4c8dc0064cca7533342ddeee747ca006d3596f54391 | Teacher |            2 |         1 |
+|       3 | kim197       | scrypt:32768:8:1$IBvnnL84j8rhx9dK$ca49dddb63cbc56ab2958cb16aa96bccf026afa4cf50c883c4623ce8c3d1cb37ec66d02ab0655d839f8ceb405624bc01abaa095028bcc62bff394737f92041d9 | Teacher |            3 |         1 |
+|       4 | lori667      | scrypt:32768:8:1$4mph78SbGTo6tKTb$70646b32ca9188ef1279e6c8f967582bba8b59d7016c79fb8ea0140baed8ec5e05459ff8cab18db14e1ec19d296790b05c7818923314e664841f8b43307d03ba | Teacher |            4 |         1 |
+|       5 | kelly148     | scrypt:32768:8:1$mBQLIwNz2Zd4a21J$db3f396c1bd8bef06851e72ea4ddee4a9096413c231763b94a324dd4bcabca69453b1c50311ef4aafac9a8d396292d9c8a75d3eb9031bd489ad227391ae2a457 | Teacher |            5 |         1 |
+|       6 | charles222   | scrypt:32768:8:1$hxsBbXPCnpKofUmB$e662ba4b428ad38edb252ce8c7f0279bc4c9e48a2c64c785a5c2e913982d1874299f927ab7d4866565362c2cac95dd1e99013fedee07ad5497320d1cb9090d20 | Teacher |            6 |         1 |
+|       7 | dr.521       | scrypt:32768:8:1$aZ4saK1wsZHMqCxW$7e79f35943ca273c6228c50739cad547ed05fb11193b410c62b7662042d2a9eb2a7e13add5b0d4ae5a7878e9a6b2f2b0de252e41e9c63ebba89a788629be3703 | Teacher |            7 |         1 |
+|       8 | samuel454    | scrypt:32768:8:1$RdNwWRf5dVruvEwi$22fd74635dbc860d4dfd78990d548879353d85966fba79d063ce60fd87f86439982eb7b98f2479f46ba3969a2f2bae00e69c4888d6b2b479348d5c8b9aede746 | Teacher |            8 |         1 |
+|       9 | dr.980       | scrypt:32768:8:1$xIznuG9f7ZYt7OvF$12cd45b132d17108602f2735869f44d87591319432fd0bb8795b99a0aa1d53c0f2787ae12f03694d0f0133942d3e26ca2299016dfefdd6f239470ace8233f34a | Teacher |            9 |         1 |
+|      10 | richard268   | scrypt:32768:8:1$cW2n79wVSDZKrQoc$580502b8568055235246cc41172fec5eff710841b339e4d40227bb2020361a0ee914baff5586b72aaacb38ac5625ce527e88bae47b2459cc4121697f9cfaf206 | Teacher |           10 |         1 |
+|      11 | andrea577    | scrypt:32768:8:1$hTcKS0ZG8X8quVVf$bd257576d108bc10dc8d2ddf7c765c3d56d756533b8eee9ab91370bc1721296e7afc2b14f1e94f214f8c64fc153aa8c34c33a9ac47a87da76ff95f0e36cd3528 | Student |            1 |         1 |
+|      12 | nicholas788  | scrypt:32768:8:1$RvYuVAj7c2CXCIwz$2cddaa809c5940894ea5101b1dd84c440fec317573c0ba199f968d38561c3f6de742ad0a4181cb4caa4be925d1638731b5b7cc55a57c4383c58609aaacae7769 | Student |            2 |         1 |
+|      13 | matthew257   | scrypt:32768:8:1$GjX6jgyLM44ANqV2$56375be49c31b48df25ae28ea425c79bc42bafdadb3000507ec42e22d16b615a6d25d3b498aacaedbe073be85cb4998b474af6fd104814916960ea9370b009af | Student |            3 |         1 |
+|      14 | michelle572  | scrypt:32768:8:1$qIbgJsFyIHfk10K3$f2b9505917cf88ad913fc351b221671f75d1397131309c1cd16b5001d62406420100b2ffae1e5631bcd44d2d1b97c34161529e8c5c903f3c7eb5ce59cdff9013 | Student |            4 |         1 |
+|      15 | susan672     | scrypt:32768:8:1$ANe2HiT20fHLhnCR$6c459ee7e3029277bc00f6073cc9eb58ff2c5973f9b29d4c9767ab8ff42b7d1bf86c73fa4b3f59c3e7d2e468260b08d4b9776c1fdd9e7330841768aa2bcf6222 | Student |            5 |         1 |
+|      16 | dylan664     | scrypt:32768:8:1$E867ZIV3jl5aeR5M$1cd1ecd8eb878c40a7f8af1827a5d8fccb010c4b25ac2df641d8053e4eaedc78dd08e24d4cd2c5e772995b5c5131af820f71437b9a87cf4c438172cd6d8f4e9b | Student |            6 |         1 |
+|      17 | robert552    | scrypt:32768:8:1$yQjSdZC5n63Bc0OR$eb3ccde2b5c25cbe84c00b3178cf8c5715ce401ea89a1e097c5a3478c01886ea942356b8c7f84e3af9faa209dfc9bae4e8ee707bb724c2a9c8e5dfcfd888b868 | Student |            7 |         1 |
+|      18 | mr.861       | scrypt:32768:8:1$WRD2s8fVKRAoWF4L$922a408ff49009e03634df1b4cfcae12b05ac32135e4f7b8aaf37b632eb4fcfbe94efd29194d8f0136099b758f238a66b28ee22fb714376deaf1d1c23bf0a9bc | Student |            8 |         1 |
+|      19 | courtney893  | scrypt:32768:8:1$0FPNNVb9pss3NfC8$cfe644e947aeae602864d7c2e982c7306ee4b944381d4cb6b35fdb6cc5ecb0ced6e609e37c4ecb3db8ceadcf650ac8ddbe35e931ebb37107cf939f3b7b00f4a6 | Student |            9 |         1 |
+|      20 | ashley822    | scrypt:32768:8:1$5FVGRcwfkSOKcaWv$a45c5a9abc83ee1089f2c123a9cc43238a939ea6a39ba0d28fc0ad49aeab046d78e73d3b17ca65ae84e68c83144cca193244f54e6a62c46ca6bf9af89967ada2 | Student |           10 |         1 |
+|      21 | jessica593   | scrypt:32768:8:1$W9XDcwOLJjdLiyET$e3c17e5909066227ba49b523c1b22901f2578d6c3c1150acaa8cb637a1da5c7a477c857ada626bfb68c26abf0545dca36fd2ce48aa56f24ed45b2cdcf9eea024 | Student |           11 |         1 |
+|      22 | joseph366    | scrypt:32768:8:1$nl5cAto6A0Tw0e6z$941cd17fa63726c3ad838c0c35286bfb10f7d38b4d8255d131dd0b8fd14b4ac2c3354f50d96766e69aed741f638eba251f7837b6d480a148f6d8ada0b90f5f4d | Student |           12 |         1 |
+|      23 | benjamin851  | scrypt:32768:8:1$E3YEhB7qknQoynKc$d57944d72c21c9669baf578d18b9b0816b13ba8128a680f9af58356e0439d14a031f9a979185c9b4c29d226d8ccf56b5980068d593a6a770282370c4b155dc4d | Student |           13 |         1 |
+|      24 | bruce752     | scrypt:32768:8:1$qswS6LteIDQe8AQO$c7bd93a44725bf3f3331143f9ba2b7b27da280ca344bc3f09c3852933fcfd7f066a6fdbbed18ab3e43d8d26cd7f20ac38981d5b5a882b4f2d5d2f113fad632cd | Student |           14 |         1 |
+|      25 | victoria558  | scrypt:32768:8:1$Dz4qJWDJes5gRYdK$ab45add3919cca28f2004faa8b25333110c5bc820c761f3bc6af2cd746b9e3f9153cc0f367996f9be08e9af6a6bf2af41bc15eaf4161c50ed8cb3fc2e93bd321 | Student |           15 |         1 |
+|      26 | kristen448   | scrypt:32768:8:1$A7x4vDeHqKpsbYZy$ef670147c61002926b88bd10a3e3f808cf0e9c598a38e5a52a70be4e855ff9042b9ac2991779978fecb2cf83152fb53d8ce37e165d0ec42dfe91817afdae7ce3 | Student |           16 |         1 |
+|      27 | dr.427       | scrypt:32768:8:1$t4QZLQH9oy5uETdl$4d20bbb6d73d8f81e9f1eb8276785e31cf0437b6b52b2ec21e750b795e16afdccb95c1a686e8fd7266cbc97501383f599ee63d187190c900a74bdc26b702bcd1 | Student |           17 |         1 |
+|      28 | christina339 | scrypt:32768:8:1$tZRIgONcQiGCxpox$eaf6f8f053f3a868a19e5cc3016432e8cfee11e871e182d2509db95c33651faf757bdc67dacc6c1520c2405fbb429980529b9dbd7948aca70eb86684ee05a6bc | Student |           18 |         1 |
+|      29 | laura727     | scrypt:32768:8:1$xxOF1N3RfM8mTnzO$a77edb722f49f305a476a91e7fbec00bb09e0e27f9d13f23e9d7056e789e8489a698577d473d250aabddfa495a9f486d3ee81479a5a3f642f31eada1b54695ad | Student |           19 |         1 |
+|      30 | lisa212      | scrypt:32768:8:1$jAoZXAsAaQO11OMO$adc53626a1973988caa4628bfd8e48413dd74601b5c7e7a1c3bfa9d2550c229981b608eccc9e431b0a5a45ef03b197528459845b3043e6ede7f3f3909e65f0cd | Student |           20 |         1 |
+|      31 | stephanie975 | scrypt:32768:8:1$MVSc4R6TSJ6etJyT$689aaee6ea69c333d199b98ed75be4ef0e18a68a24314f1bf53b9bee815d26f7e43b64701b4051333f87e69a46edbd1e599db9501b8692c46781b4833d5107b0 | Student |           21 |         1 |
+|      32 | courtney896  | scrypt:32768:8:1$ejNHBLW8H5rDcKwK$3877e53352e7317e8d70e584db1678ae468620245835024bbc9acec6197eee537c05afad3064dddd1413455717f163ca0b76a3399d28258fecf5d189bd2321b3 | Student |           22 |         1 |
+|      33 | dale688      | scrypt:32768:8:1$Az5bTjbF24M5OBc5$5126abc8b44e2e175998fba0079979f43b031d46af47990b39b7b18f222178601afc412da361d4603a3913cf1aa76b2dcb49d20c6cfd21dfc7175bc0aae73289 | Student |           23 |         1 |
+|      34 | roger130     | scrypt:32768:8:1$DRlW6K0WlXzzQFL0$988d4e8c9969c37f029fa4bbb91cd4feb382d97162df8aa9926745b36d2dc9ff700f736b768433c0918b7a6651297139b72da013c64b97a3bca500d25b76bc32 | Student |           24 |         1 |
+|      35 | gary569      | scrypt:32768:8:1$XZjwI4BnTiQ1bkfI$bf677e8402d02a29fdb7f923f55176bbcd6377a70176af59ac57052ed0fbeb6a5ccdac3120850eb8017f1703f7032ecde5ce6f2186bae11a7d108abf75469637 | Student |           25 |         1 |
+|      36 | maria986     | scrypt:32768:8:1$CXDHmGYhMHRFJap1$ada471863d099db0be6fe4e6bc85f157a71b8b6e787ddf763c6b94110bce87cfdd90b21d1ff2f5944cdb27c4ab8886f441b8f8f0c5d780768e2de895a22b5a37 | Student |           26 |         1 |
+|      37 | brent990     | scrypt:32768:8:1$JeXaAuqJD5amA7Oi$bf63231ea6a0b00b014d1f2eb44dfd1c4872dba3dc69ae69dd6a5a7a6cf19ea343008a75e474ae6c6963dba6445110283150541a64d3c821273be8d41e6f28cc | Student |           27 |         1 |
+|      38 | yvonne848    | scrypt:32768:8:1$vr7ZtxCW9SiAc88R$6d6df82abc2534a15d3f8ff4b6e631470418ea0fd5dc67623cffcfd5a77f7c3ce94555556cb31007d0801811a967f7f6325c37f8ebc48ecc50b408ccd566755c | Student |           28 |         1 |
+|      39 | jose257      | scrypt:32768:8:1$VTHSianKmu1N8N5X$be1e1f6cdaec0e7280bfa46c66814c629bd4c38ddf7d0411acfd054489fd2677841636903c88712695538a2485cc37ea7f7f9a3bff02ed596ae9d859778c3eeb | Student |           29 |         1 |
+|      40 | patricia986  | scrypt:32768:8:1$aEAc41KIc5uqOk82$ad9f16b1084750a686c61568d26cff6e9ee1abeee926e968a7d0d535b3e69ba33fcb6640975a98df1f9cc35d65a3e9c9fd290dd64af7f6820b5e61eabdc3b5ba | Student |           30 |         1 |
+|      41 | michael903   | scrypt:32768:8:1$4C1lnjbbZLkThgyF$98d7bb9f426c53a8859929648ef1d9456d8715a3cae5d016ca26190449e4ebd3ccb14e9eaa813d7b470c91143842054eab721d4f72edcc84a8a4cd764928d0ca | Student |           31 |         1 |
+|      42 | claudia242   | scrypt:32768:8:1$Xjo1ARTRaieSbwaS$01b37b4fa3d08be3e864675194aa34263a1cac520593617fca17d4bbc86e27968bf009d0f104d88d8c3de603973b7012d38e2f68a68c990828739713c10b3e36 | Student |           32 |         1 |
+|      43 | wyatt800     | scrypt:32768:8:1$BfV3ETKJr1QY0Hta$452b83adc2aab54feb66d7a8a6deeafa30b290a58e94d9ec4a3b18b328385a2416f62814d0be19162a82df592f4d6ff3430bd1d1460ad5b5c5a4de6d8a9f591b | Student |           33 |         1 |
+|      44 | zachary828   | scrypt:32768:8:1$O2f1MtAgSg1W6OKT$7037a658c7f4f121deb75dc2f80a5dfa4cbb387a6ebebc0c14eca9311f24dbb8cbc126bc3bc5b0cc5f4d834914386495af03f692af8d8674d3a1393208cef97c | Student |           34 |         1 |
+|      45 | robert234    | scrypt:32768:8:1$39B2y9Vh12AkRitM$93b119869d3e1556bf4a7b514d6f78189fb6c4ba19636a1f3b4ae86cce1ce7750acc468ffca84f513f3a0cd20fd7cd52844fc930e2089c44a7da273018cd815c | Student |           35 |         1 |
+|      46 | jason891     | scrypt:32768:8:1$OvY1A68WExLZnxOA$2527a6c469d01f8f68f8a2aa74c7dba484c7aedf6655390db95a05e5ae17be1283d3faa40fc7369278f4a574873da1f0424c6a4d3964bcbde3e8d9929f322ee5 | Student |           36 |         1 |
+|      47 | connor695    | scrypt:32768:8:1$BsVjwd4V2jumvyT0$085656e378952ba78850f22a2924cd0faa4c4c720cd78d041e724054f01375fa32669ab0ed37e99349a573b0e8f61138660571fd889b1720ad5ce561f44b145e | Student |           37 |         1 |
+|      48 | ian826       | scrypt:32768:8:1$dc9BiKZijNs10n1t$0859c0dffe8cf812ab834d70bb52d6b0fd5191227beb5f668e5c9baeeb1c49179e6d36f0ffa73cfdd1ddf736fdc2dc2701c584ddd6d7a52052f33b265971f6ad | Student |           38 |         1 |
+|      49 | brian847     | scrypt:32768:8:1$IUksOh0pMnRZ7kKp$cbdddb1c49a4db91c452b729f50482ba0bbe4a4019c710a47931fd55084f7158446b7747f958f0023e0c0200fe2e082c004015d0065898a7226a4d571cc84703 | Student |           39 |         1 |
+|      50 | robert435    | scrypt:32768:8:1$acuB7f6TzmK247Ae$5ad383ca6eb9a611e395d23c85b7aaf3dbeaf67f2d97008c497cdb4d3e8b1d7a4257d3c5cb40e2ab15f8f5bae9201c000496e02ce1879d9b59e021b5b48e7849 | Student |           40 |         1 |
+|      51 | bonnie738    | scrypt:32768:8:1$4QQzxdRwjFESTVnG$4a5b47327ab43f59076e58961c6f9f6a53a7597ef14982b5794b92c2a69ae014751ab8f61385a7e1a71cc3704874e52b3ef74bdf219c2bd3d60bc63b184f9d7d | Student |           41 |         1 |
+|      52 | robin680     | scrypt:32768:8:1$HVin4Bzf8bDKGcOO$c5c8e16567705a286b2f3032f9af7ba701a3c8492c9085a1e323a21f4aeb069dc8aac8ededeffeb3098bb5f539b1796b236def51f0ba49d9c16ca3054be5637b | Student |           42 |         1 |
+|      53 | austin431    | scrypt:32768:8:1$pHKzuG8FuD0c7hPJ$b7af44e52cabc5ab18aede137cc38f4efecf6f0e0dcbf75aed8635484678b92167c38bc85443b5a799c7db54297524b7a640c5e5234444827673cdcd3978ef47 | Student |           43 |         1 |
+|      54 | felicia342   | scrypt:32768:8:1$b2mKA17mtUWZr342$85a37302cdfbe48c60bbf5c34bfa1ebb578c38d3c7ed1a3a4b6018a6287bdeee73d52ad7bccebacdf713144817abeed3a4b7d8a430e4c0c4f18e52eca4aec065 | Student |           44 |         1 |
+|      55 | lisa871      | scrypt:32768:8:1$uXMy8QVMVMkjDu0w$55a8c6721a55214daf150c0978ae953e3f424fc7eebeeac087307d6814473ee4bd4648b3934d55a67b6a3a1bb449f1ac1c5a3825ce21f195b7a93ef08327e00d | Student |           45 |         1 |
+|      56 | kaitlyn128   | scrypt:32768:8:1$PNk621ZPldOSg5VL$095500ed4af6450d301bb048036b976de573429c6b1aa83e087921f48f3dd3bb98564955b5c54e336fbf9a4e2010b865788da56aefd7a7d3d6c7318fedaff033 | Student |           46 |         1 |
+|      57 | william966   | scrypt:32768:8:1$jgJgHRAbAXompHyT$15bda437ff0c72d6abf5c6b64631936a3a7bd5c3ec2ac384dc67893835699ba00bc63e9ec2fb968d75585685f7be5789f11ae503bc26f79d0fae5941987b3a60 | Student |           47 |         1 |
+|      58 | william697   | scrypt:32768:8:1$Apoyi3aRqPwACoje$e5360c2e319b36a0d0da584fec77ab190b63fd270cad9aa1be2bbedd0d5f0640186337c767f2178cf7e9ccb82529e4e40cffdfbe8b07b0dd9760078f03efbfcf | Student |           48 |         1 |
+|      59 | ryan708      | scrypt:32768:8:1$IsqQkBjCzuKjmFxf$bf9f8615d09011688f44dd284f2f19e5a43de34483e46bd4e1ad67d1047b1103e5a5c71fd7a5f2d185e19adfadbee0e9ea41df43484728a35fef90a51a8e2f8b | Student |           49 |         1 |
+|      60 | pamela886    | scrypt:32768:8:1$vOlsyZ6U8XLB2GmV$f75c1075c4f32b2f37d74a72e2eb985e2ba04843599a4a70a219236d9fc0267e655e7640b38fc6efc7374844ec58bbe7f9cdbee7250779031aec4bb698a4fb7e | Student |           50 |         1 |
+|      61 | james186     | scrypt:32768:8:1$vVwlt3OU9ImK5Txv$9604f224b43efc2955585191b69dfad2b566baa19996c3e8b5ba1cd514c78a5bcc0b384fa954d74de8808c430ce2b77a461f99cee578ea9306d39ff2110419c9 | Student |           51 |         1 |
+|      62 | patrick454   | scrypt:32768:8:1$IPNcWK9osB7ZjREW$71c6b6e9f429915e13ffa34b239ae4b85c6113aca298f08f481070f8833006856ea2c7f29e70fe458f1f1573a9b901006943262029d17252ff6738c83c49e24f | Student |           52 |         1 |
+|      63 | john901      | scrypt:32768:8:1$XdSePmf8jOBCTDbg$89adce3a30a7ea350a0f517a9c90bf6969f4f7dd0ba415385d23eb21e6e256cc12ac288a62b60127e8cf0f6621e249fadf5ff7929c609e682f17e3348366ee75 | Student |           53 |         1 |
+|      64 | mr.736       | scrypt:32768:8:1$0fRUjPSHt1er3yD6$27577eeca384eb87c575f6ca09b9863abc2be273359128a09694d8b7a442d0de54376ff6cb66b21d0bb20ca9faee8fc47be7e43773abee9b50934c7e0d73e6ed | Student |           54 |         1 |
+|      65 | alexandra369 | scrypt:32768:8:1$6Hmj4weBmbxAMaWd$f245b651e9c8e101a504c14b239989b7b61981c87ce0bc51d13a9dc27a208acd57a742c7384079ea4d56deafd0a72b666738c06acf5db9175c8408fe53fe20f1 | Student |           55 |         1 |
+|      66 | sarah956     | scrypt:32768:8:1$z1bOuCMyVIPWQk8h$0496f9db0e29b5df24cc15f5e53ca682490bbff7784e4a3c51de9d38101fc451bdd63d711cd89da887452b76c09aaf59a726e4110a9d609da8763bf2f81b15a9 | Student |           56 |         1 |
+|      67 | nicole642    | scrypt:32768:8:1$73ylKgo4ZLu9OsVe$f2da3ef5d75173b82a9204d18ac4442fb6b45696214e23f81b944eaa5a12833e8d7d6a9fe3e079a04e1209cb713bdecf11342b26d7cc4b407830c5b63df21e84 | Student |           57 |         1 |
+|      68 | charles846   | scrypt:32768:8:1$h7XrQCgKSIZFic4v$a754fe63f2bb127565508b4905d91ff839dccdfb9f621ffa7795026c2331b7b72d7a192d366098c157c0ed91660e04acf7d5cd6b3db91d1d1cd34e0966df35a2 | Student |           58 |         1 |
+|      69 | patricia730  | scrypt:32768:8:1$vmlVMsx5O5QpBY9W$21f3d6efbf5a040669a529f730505febe6e4cb983512fceb12bad965a470ce4dc62744b934b5d06efb3c5660c107e170810c9e04cebf9d1f909b6bedf2058d33 | Student |           59 |         1 |
+|      70 | robin878     | scrypt:32768:8:1$NFlbO6bsgftW45UT$2dc6e9fbb4fc0a31a8f715712dbec0f7ef1361e10f67e966acc6bfcb63f355d440b87c598a7705ff5a842fbd4178a6330132afa9e175807de8fa585f4fbe8cbc | Student |           60 |         1 |
+|      71 | rachel449    | scrypt:32768:8:1$7SAnaCMcnp2cCipQ$978f7e432a220f8a0bb9de65b2b1b4100dd256a0eed39e24fb70d79cbbf31b6bd1ac1148cbceedbf0d5cc67d6b84ade5dc5a630e9bb7c9ba2257eb7c584a0513 | Student |           61 |         1 |
+|      72 | mark813      | scrypt:32768:8:1$CFvTykil1zXCduQ3$799c95314212b5f7f9ef7dd9a596338925ddfcbcd993f8846bb5d0b9e51c056849ce7e4665a8c1610e69ce1143890adff726da3d02209b980f3403eb0e2b38dd | Student |           62 |         1 |
+|      73 | michael274   | scrypt:32768:8:1$EXMJkxkH7jdT7O8l$8b3ed9464cafeb4f21ced1bd30e3a55ee9ca61fe75aa4d1bef6e44696e25f5f69bbd995a0481b377d543d24151ed2b1c198b31156c906d2eec8221bdce953eba | Student |           63 |         1 |
+|      74 | donna233     | scrypt:32768:8:1$nzMvlN6C7pV5WwHq$676f82bfb32626cf43f65193efa5ea72f049030a44f79bbeb9cbdd83fec86ebf81bda44998e326f1a0c7811d978fdf7b5b03b46833fb042d67552e6de6fc862a | Student |           64 |         1 |
+|      75 | jennifer275  | scrypt:32768:8:1$WdpLKtNIOT31005n$c77dd34b891f1e6bd7e127cf1ed05beb1b38a54de1eabceeb7583b3e3ca9e0196b5dc62253ad4c3e6fa8a34d666be2e49a142fe9252c61d07f8b7406090270cf | Student |           65 |         1 |
+|      76 | rachel208    | scrypt:32768:8:1$wcOCa1BqKplYj9De$c0cac9193b615abfc11b4cfada6b62cc5133b9b2fab5016f8f04b05c75c24821321fb6d7312db21d5f87447a63f688658b2ad11b9b689fcb42a596963fafdf1e | Student |           66 |         1 |
+|      77 | austin903    | scrypt:32768:8:1$oYFnmyPRRJIeQyJE$fbbe4c12a238f3160105977bc1284fdf40c11f3aded8b752d32e4092b99dd7c3edd76d053fe4868ff4a84b12f89fe535cc1ec608f74c1db71fcb356169070bf6 | Student |           67 |         1 |
+|      78 | michael429   | scrypt:32768:8:1$qbgEvbsKs3NmHDnN$1a240648c7fb85edf9d89b89d86c2a99e8eac3224947f243bade9c744a1ea5719f61f977952496f60f7a33323bd0c98d5456a11b3c6b42a3d52a754f32e0db37 | Student |           68 |         1 |
+|      79 | hannah219    | scrypt:32768:8:1$mbuwVxvPleuSYsr1$46dc30502b32af541aa8ce0a094c8a6c5810e8bacadc3f09f1a14202d44b8a1fa9b644155c5d7b5eae91da75d3e21c6b54d60e484e3a27c6eb55f3af6eec7e07 | Student |           69 |         1 |
+|      80 | paul663      | scrypt:32768:8:1$d3JMVEcLU62y6DxX$19d44e52ecf84de627d537a90df470edf1e95cbeb62913e7487714228175b4435e4a03716d1af055a7254f784cdfcb94ec8d0794d4237bf648df0b090d7d3563 | Student |           70 |         1 |
++---------+--------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+--------------+-----------+
+80 rows in set (0.00 sec)
+
+mysql> select * from attendance;
+Empty set (0.00 sec)
+
+mysql> select * from attendance;
++---------------+------------+------------+---------+
+| attendance_id | session_id | student_id | status  |
++---------------+------------+------------+---------+
+|             1 |        151 |         13 | Present |
+|             2 |        151 |         39 | Present |
+|             3 |        151 |         14 | Present |
+|             4 |        151 |         18 | Present |
+|             5 |        151 |         32 | Present |
+|             6 |        151 |          9 | Absent  |
+|             7 |        151 |         69 | Present |
+|             8 |        151 |         51 | Present |
+|             9 |        151 |         36 | Present |
+|            10 |        151 |         65 | Present |
+|            11 |        151 |         53 | Absent  |
+|            12 |        151 |         46 | Present |
+|            13 |        151 |         16 | Present |
+|            14 |        151 |         19 | Present |
+|            15 |        151 |         45 | Present |
+|            16 |        151 |         62 | Absent  |
+|            17 |        151 |          3 | Absent  |
+|            18 |        151 |          4 | Present |
+|            19 |        151 |         54 | Present |
+|            20 |        151 |         50 | Present |
+|            21 |        151 |         59 | Present |
+|            22 |        151 |         30 | Present |
+|            23 |        151 |         61 | Present |
+|            24 |        151 |         40 | Present |
+|            25 |        151 |         35 | Present |
+|            26 |        151 |          7 | Present |
+|            27 |        151 |         24 | Present |
+|            28 |        151 |         49 | Present |
+|            29 |        151 |         28 | Present |
++---------------+------------+------------+---------+
+29 rows in set (0.00 sec)
+
+mysql>

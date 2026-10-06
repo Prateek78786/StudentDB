@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<h2>Mark Attendance</h2>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Select Course and Date</h5>
+            </div>
+            <div class="card-body">
+                <form id="courseForm" method="get">
+                    <div class="mb-3">
+                        <label for="course_id" class="form-label">Course</label>
+                        <select class="form-select" id="course_id" name="course_id" required>
+                            <option value="">-- Select Course --</option>
+                            {% for course in courses %}
+                            <option value="{{ course.course_id }}" {% if request.args.get('course_id')|int == course.course_id %}selected{% endif %}>
+                                {{ course.course_code }} - {{ course.course_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" 
+                               value="{{ request.args.get('date') or today }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Load Students</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if course and students %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>{{ course.course_code }} - {{ course.course_name }} ({{ selected_date }})</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('teacher_attendance', course_id=request.args.get('course_id'), date=request.args.get('date')) }}">
+                    <input type="hidden" name="session_id" value="{{ session_id }}">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Registration No.</th>
+                                    <th>Name</th>
+                                    <th>Attendance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{ student.registration_number }}</td>
+                                    <td>{{ student.name }}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="present" value="{{ student.student_id }}" 
+                                                   id="student{{ student.student_id }}"
+                                                   {% if student.status == 'Present' %}checked{% endif %}>
+                                            <label class="form-check-label" for="student{{ student.student_id }}">Present</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save Attendance</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
